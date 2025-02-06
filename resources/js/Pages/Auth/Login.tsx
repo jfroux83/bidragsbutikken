@@ -9,7 +9,7 @@ import Submit from "@/Components/Forms/Submit";
 const Login = () => {
 
     const { data, setData, post, processing, errors } = useForm({
-        username: '',
+        email: '',
         password: ''
     });
 
@@ -40,11 +40,11 @@ const Login = () => {
                         {/* Form */}
                         <Form onSubmit={handleSubmit}>
                             <TextField
-                                name="username"
-                                label="Username"
-                                value={data.username}
-                                onChange={(e: any) => setData('username', e.target.value)}
-                                error={errors['username']}
+                                name="email"
+                                label="Email"
+                                value={data.email}
+                                onChange={(e: any) => setData('email', e.target.value)}
+                                error={errors['email']}
                             />
 
                             <Password

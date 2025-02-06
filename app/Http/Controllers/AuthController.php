@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\SCUser;
+use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 use Inertia\Response;
 use Inertia\ResponseFactory;
 
@@ -16,25 +16,43 @@ class AuthController extends Controller
         return inertia('Auth/Login');
     }
 
-    public function login(): RedirectResponse
+    /**
+     * @throws ValidationException
+     */
+    public function login(LoginRequest $request): RedirectResponse
     {
-        $validate = request()->validate([
-            'username' => ['required', 'string'],
-            'password' => ['required', 'string'],
-        ]);
+        $request->authenticate();
 
-        $user = SCUser::where('login', $validate['username'])->first();
+        $request->session()->regenerate();
 
-        if (!$user || !hash('sha256', $validate['password']) === $user->password) {
-            Log::channel('custom_errors')->error('Wrong username or password');
+        $user = Auth::user();
+
+        if (!$user->profile) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
             return redirect()
-                ->back()
-                ->with('error', 'Wrong Credentials provided');
+                ->route('login')
+                ->with('error', 'No profile assigned. Please contact administrator.');
         }
 
-        Auth::login($user);
+        // Update last login timestamp
+        // $user->update(['last_login_at' => now()]);
 
+        // Redirect based on profile type
         return redirect()
-            ->route('dashboard');
+            ->route($user->profile->name . '.dashboard')
+            ->with('success', 'Welcome back!');
+    }
+
+    public function destroy(): RedirectResponse
+    {
+        Auth::logout();
+
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
+
+        return redirect()->route('login');
     }
 }
