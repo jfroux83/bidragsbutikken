@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CustomerDashboardController;
+use App\Http\Controllers\OrganizationDashboardController;
+use App\Http\Controllers\VendorDashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -25,8 +28,10 @@ Route::get('/', function () {
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'index'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
+});
 
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
 // System Admin Routes
@@ -36,17 +41,17 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'profile:admin'])->g
 
 // Organization Routes
 Route::prefix('organization')->name('organization.')->middleware(['auth', 'profile:organization'])->group(function () {
-    // Route::get('/dashboard', [OrganizationDashboardController::class, 'index'])->name('dashboard');
+     Route::get('/dashboard', [OrganizationDashboardController::class, 'index'])->name('dashboard');
 });
 
-// Seller Routes
-Route::prefix('seller')->name('seller.')->middleware(['auth', 'profile:seller'])->group(function () {
-    // Route::get('/dashboard', [SellerDashboardController::class, 'index'])->name('dashboard');
+// Vendor Routes
+Route::prefix('vendor')->name('vendor.')->middleware(['auth', 'profile:vendor'])->group(function () {
+     Route::get('/dashboard', [VendorDashboardController::class, 'index'])->name('dashboard');
 });
 
 // Customer Routes
 Route::prefix('customer')->name('customer.')->middleware(['auth', 'profile:customer'])->group(function () {
-    // Route::get('/dashboard', [CustomerDashboardController::class, 'index'])->name('dashboard');
+     Route::get('/dashboard', [CustomerDashboardController::class, 'index'])->name('dashboard');
 });
 
 // include 'tests.php';

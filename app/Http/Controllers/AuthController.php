@@ -46,7 +46,7 @@ class AuthController extends Controller
             ->with('success', 'Welcome back!');
     }
 
-    public function destroy(): RedirectResponse
+    public function logout(): RedirectResponse
     {
         Auth::logout();
 
