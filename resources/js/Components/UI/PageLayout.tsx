@@ -43,7 +43,7 @@ const PageLayout = ({
             case 'warning':
                 return `${baseStyles} border-yellow-600 bg-white text-yellow-600 hover:bg-yellow-50 focus:ring-yellow-500`;
             default: // primary
-                return `${baseStyles} border-[#0E4F6C] bg-white text-[#508ABE] hover:bg-[#C2E9F5] focus:ring-[#508ABE]`;
+                return `${baseStyles} border-green-600 bg-white text-green-600 hover:bg-green-50 focus:ring-green-500`;
         }
     };
 

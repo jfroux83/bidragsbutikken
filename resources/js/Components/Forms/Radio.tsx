@@ -43,7 +43,7 @@ const Radio = ({
                         {options.map((option) => (
                             <label
                                 key={option.value}
-                                className={`relative flex items-center p-4 border rounded-lg cursor-pointer transition-colors duration-200 ${value === option.value ? 'bg-[#C2E9F5] border-[#508ABE]' : 'bg-white border-gray-200 hover:bg-gray-50'} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                className={`relative flex items-center p-4 border rounded-lg cursor-pointer transition-colors duration-200 ${value === option.value ? 'bg-green-50 border-green-500' : 'bg-white border-gray-200 hover:bg-gray-50'} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
                                 <input
                                     type="radio"
