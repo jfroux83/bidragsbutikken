@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\AdminOrganizationController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerDashboardController;
 use App\Http\Controllers\OrganizationDashboardController;
@@ -37,6 +38,15 @@ Route::middleware('auth')->group(function () {
 // System Admin Routes
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'profile:admin'])->group(function () {
      Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+     Route::prefix('organization')->name('organization.')->group(function () {
+         Route::get('/', [AdminOrganizationController::class, 'index'])->name('index');
+         Route::get('/create', [AdminOrganizationController::class, 'create'])->name('create');
+         Route::post('/', [AdminOrganizationController::class, 'store'])->name('store');
+         Route::get('/{organization}/edit', [AdminOrganizationController::class, 'edit'])->name('edit');
+         Route::put('/{organization}', [AdminOrganizationController::class, 'update'])->name('update');
+         Route::delete('/{organization}', [AdminOrganizationController::class, 'destroy'])->name('destroy');
+     });
 });
 
 // Organization Routes

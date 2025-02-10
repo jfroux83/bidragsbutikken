@@ -17,12 +17,12 @@ const navigation: NavItem[] = [
         title: 'Dashboard',
         href: '/admin/dashboard',
     },
-    // {
-    //     title: 'Logs',
-    //     items: [
-    //         { title: 'Audit Logs', href: '/logs/audit', description: 'Show system audit logs' },
-    //     ]
-    // }
+    {
+        title: 'Organizations',
+        items: [
+            { title: 'View Organizations', href: '/admin/organization', description: 'Manage Organizations' },
+        ]
+    }
 ];
 
 const AdminNav = () => {
