@@ -5,6 +5,7 @@ use App\Http\Controllers\AdminOrganizationController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerDashboardController;
 use App\Http\Controllers\OrganizationDashboardController;
+use App\Http\Controllers\PostalCodeController;
 use App\Http\Controllers\VendorDashboardController;
 use Illuminate\Support\Facades\Route;
 
@@ -38,6 +39,17 @@ Route::middleware('auth')->group(function () {
 // System Admin Routes
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'profile:admin'])->group(function () {
      Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+     Route::prefix('configuration')->name('configuration.')->group(function () {
+         Route::prefix('postal-code')->name('postal-code.')->group(function () {
+             Route::get('/', [PostalCodeController::class, 'index'])->name('index');
+             Route::get('/create', [PostalCodeController::class, 'create'])->name('create');
+             Route::post('/', [PostalCodeController::class, 'store'])->name('store');
+             Route::get('/{postalCode}/edit', [PostalCodeController::class, 'edit'])->name('edit');
+             Route::put('/{postalCode}', [PostalCodeController::class, 'update'])->name('update');
+             Route::delete('/{postalCode}', [PostalCodeController::class, 'destroy'])->name('destroy');
+         });
+     });
 
      Route::prefix('organization')->name('organization.')->group(function () {
          Route::get('/', [AdminOrganizationController::class, 'index'])->name('index');
