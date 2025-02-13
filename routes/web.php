@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerDashboardController;
 use App\Http\Controllers\OrganizationDashboardController;
 use App\Http\Controllers\PostalCodeController;
+use App\Http\Controllers\SystemJobController;
 use App\Http\Controllers\VendorDashboardController;
 use Illuminate\Support\Facades\Route;
 
@@ -40,6 +41,14 @@ Route::middleware('auth')->group(function () {
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'profile:admin'])->group(function () {
      Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
+    // System Jobs routes
+    Route::prefix('system-jobs')->name('jobs.')->group(function () {
+        Route::get('/', [SystemJobController::class, 'index'])->name('index');
+        Route::get('/active-count', [SystemJobController::class, 'activeCount'])->name('active-count');
+        Route::get('/list', [SystemJobController::class, 'list'])->name('list');
+        Route::get('{jobId}', [SystemJobController::class, 'cancel'])->name('cancel');
+    });
+
      Route::prefix('configuration')->name('configuration.')->group(function () {
          Route::prefix('postal-code')->name('postal-code.')->group(function () {
              Route::get('/', [PostalCodeController::class, 'index'])->name('index');
@@ -48,6 +57,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'profile:admin'])->g
              Route::get('/{postalCode}/edit', [PostalCodeController::class, 'edit'])->name('edit');
              Route::put('/{postalCode}', [PostalCodeController::class, 'update'])->name('update');
              Route::delete('/{postalCode}', [PostalCodeController::class, 'destroy'])->name('destroy');
+             Route::get('/download-template', [PostalCodeController::class, 'downloadTemplate'])->name('downloadTemplate');
+             Route::get('/upload', [PostalCodeController::class, 'upload'])->name('upload');
+             Route::post('/upload', [PostalCodeController::class, 'uploadProcess'])->name('upload-process');
          });
      });
 

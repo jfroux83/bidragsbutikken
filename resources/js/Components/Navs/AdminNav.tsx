@@ -1,5 +1,6 @@
 import {Link, usePage} from "@inertiajs/react";
 import React, {useState} from "react";
+import JobsIndicator from "@/Pages/Admin/SystemJobs/JobsIndicator";
 
 interface NavItem {
     title: string;
@@ -33,6 +34,7 @@ const navigation: NavItem[] = [
 
 const AdminNav = () => {
     const user: any = usePage().props.auth;
+    const activeJobsCount: any = usePage().props.activeJobsCount;
 
     const [openMenu, setOpenMenu] = useState<string | null>(null);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
@@ -128,6 +130,7 @@ const AdminNav = () => {
 
                     {/* Right section for user */}
                     <div className="flex items-center">
+                        <JobsIndicator initialCount={activeJobsCount} />
                         <div className="hidden sm:flex sm:items-center sm:ml-6">
                             <span className="text-gray-700 px-3">Welcome, {user.user.name || 'Guest'}</span>
                             <Link

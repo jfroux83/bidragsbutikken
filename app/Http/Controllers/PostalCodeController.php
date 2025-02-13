@@ -2,15 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\PostalCodesImportJob;
 use App\Models\PostalCode;
+use App\Traits\ManagesSystemJobs;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
 use Inertia\Response;
 use Inertia\ResponseFactory;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class PostalCodeController extends Controller
 {
+    use ManagesSystemJobs;
+
     public function index(): Response|ResponseFactory
     {
         $postalCodes = PostalCode::orderBy('postal_code')
@@ -115,5 +120,76 @@ class PostalCodeController extends Controller
         }
     }
 
-    public function destroy(PostalCode $postalCode) {}
+    public function destroy(PostalCode $postalCode): RedirectResponse
+    {
+        try {
+            $postalCode->delete();
+
+            return redirect()
+                ->route('admin.configuration.postal-code.index')
+                ->with('success', 'Postal Code deleted successfully.');
+
+        } catch (Exception $e) {
+            Log::channel('custom_errors')->error(PostalCodeController::class . '::destroy(): ' . $e->getMessage());
+            return redirect()
+                ->back()
+                ->with('error', 'Something went wrong. Please try again.');
+        }
+    }
+
+    public function downloadTemplate(): BinaryFileResponse|RedirectResponse
+    {
+        $filePath = storage_path('app/private/templates/template_postal_codes.xlsx');
+
+        if (!file_exists($filePath)) {
+            return redirect()
+                ->back()
+                ->with('error', 'Template file not found.');
+        }
+
+        return response()->download($filePath, 'template_postal_codes.xlsx');
+    }
+
+    public function upload(): Response|ResponseFactory
+    {
+        return inertia('Admin/Configuration/PostalCode/Import');
+    }
+
+    public function uploadProcess(): RedirectResponse
+    {
+        $validate = request()->validate([
+            'file' => ['required', 'file', 'mimes:xlsx,xls', 'max:5120']
+        ]);
+
+        try {
+            $file = request()->file('file');
+
+            $filename = 'excel_' . time() . '.' . $file->getClientOriginalExtension();
+
+            $path = $file->storeAs('uploads', $filename, 'private');
+
+            $jobId = $this->createSystemJob(
+                name: 'Process Excel Upload for Postal Codes',
+                type: 'excel.import.postal-codes',
+                parameters: [
+                    'filename' => $filename,
+                    'original_filename' => $file->getClientOriginalName(),
+                    'path' => $path,
+                ],
+                message: 'Excel file uploaded, pending processing'
+            );
+
+            PostalCodesImportJob::dispatch($jobId, $path);
+
+            return redirect()
+                ->back()
+                ->with('success', 'File uploaded and queued for processing.');
+
+        } catch (Exception $e) {
+            Log::channel('custom_errors')->error(PostalCodeController::class . '::uploadProcess(): ' . $e->getMessage());
+            return redirect()
+                ->back()
+                ->with('error', 'Something went wrong. Please try again.');
+        }
+    }
 }

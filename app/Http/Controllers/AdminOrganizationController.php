@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Organization;
+use App\Models\PostalCode;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
@@ -43,7 +44,9 @@ class AdminOrganizationController extends Controller
 
     public function create(): Response|ResponseFactory
     {
-        return inertia('Admin/Organization/Create');
+        return inertia('Admin/Organization/Create', [
+            'postalCodes' => $this->getPostalCodes(),
+        ]);
     }
 
     public function store(): RedirectResponse
@@ -103,7 +106,8 @@ class AdminOrganizationController extends Controller
                 'telephone' => $organization->telephone,
                 'email' => $organization->email,
                 'logo' => $organization->logo
-            ]
+            ],
+            'postalCodes' => $this->getPostalCodes(),
         ]);
     }
 
@@ -149,4 +153,15 @@ class AdminOrganizationController extends Controller
     }
 
     public function destroy(Organization $organization) {}
+
+    private function getPostalCodes()
+    {
+        return PostalCode::where('status', 1)
+            ->orderBy('postal_code')
+            ->get()
+            ->map(fn ($postalCode) => [
+                'label' => $postalCode->postal_code . ', ' . $postalCode->city,
+                'value' => (string) $postalCode->postal_code,
+            ]);
+    }
 }

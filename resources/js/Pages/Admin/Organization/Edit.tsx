@@ -6,6 +6,7 @@ import TextField from "@/Components/Forms/TextField";
 import ButtonRow from "@/Components/Forms/ButtonRow";
 import Submit from "@/Components/Forms/Submit";
 import {CornerDownLeft, Mail} from "lucide-react";
+import Select from "@/Components/Forms/Select";
 
 interface Props {
     organization: {
@@ -19,11 +20,16 @@ interface Props {
         postalCode: string;
         telephone: string;
         email: string;
-    }
+    };
+    postalCodes: Array<{
+        label: string;
+        value: string;
+    }>;
 }
 
 const Edit = ({
-    organization
+    organization,
+    postalCodes
 }: Props) => {
 
     const { data, setData, put, processing, errors } = useForm({
@@ -111,12 +117,24 @@ const Edit = ({
                     disabled={true}
                 />
 
-                <TextField
+                <Select
                     name="postalCode"
                     label="Postal Code"
                     value={data.postalCode}
-                    onChange={(e: any) => setData('postalCode', e.target.value)}
+                    options={postalCodes}
+                    onChange={(field, value) => {
+                        setData(field, value)
+
+                        const foundObj = postalCodes.find(p => p.value === value);
+
+                        if (foundObj) {
+                            const city = foundObj.label.split(',')[1].trim();
+                            setData('city', city);
+                        }
+                    }}
                     error={errors.postalCode}
+                    placeholder="Please select"
+                    searchable={true}
                 />
             </div>
 

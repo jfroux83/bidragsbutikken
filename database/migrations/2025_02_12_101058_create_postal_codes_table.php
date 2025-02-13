@@ -16,8 +16,8 @@ return new class extends Migration
             $table->integer('status')->default(1);
             $table->string('postal_code', 20);
             $table->string('city', 100);
-            $table->string('latitude', 100);
-            $table->string('longitude', 100);
+            $table->string('latitude', 100)->nullable();
+            $table->string('longitude', 100)->nullable();
             $table->timestamps();
         });
     }

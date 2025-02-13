@@ -23,7 +23,7 @@ const CodeView = ({
     };
 
     return (
-        <div className="relative rounded-lg bg-gray-900 p-4">
+        <div className="relative rounded-lg bg-gray-900 p-4 h-[450px]">
             <div className="absolute right-2 top-2">
                 <button
                     onClick={handleCopy}
@@ -32,7 +32,7 @@ const CodeView = ({
                     {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                 </button>
             </div>
-            <pre className="text-sm text-gray-100 overflow-x-auto">
+            <pre className="text-sm text-gray-100 overflow-x-auto h-[95%]">
                 <code>{formattedCode}</code>
             </pre>
         </div>

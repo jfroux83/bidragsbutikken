@@ -20,11 +20,16 @@ interface Props {
         telephone: string;
         email: string;
         logo: string;
-    }
+    };
+    postalCodes: Array<{
+        label: string;
+        value: string;
+    }>;
 }
 
 const Container = ({
     organization,
+    postalCodes,
 }: Props) => {
 
     const [activeTab, setActiveTab] = useState<Tab>('edit');
@@ -100,7 +105,10 @@ const Container = ({
                         {activeTab === 'edit' && (
                             <div>
                                 <h2 className="text-2xl font-medium mb-6">Edit</h2>
-                                <Edit organization={organization} />
+                                <Edit
+                                    organization={organization}
+                                    postalCodes={postalCodes}
+                                />
                             </div>
                         )}
                         {activeTab === 'payment_methods' && (
