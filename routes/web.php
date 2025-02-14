@@ -31,6 +31,8 @@ Route::get('/', function () {
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'index'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/password/create/{token}', [AuthController::class, 'createPassword'])->name('password.create');
+    Route::post('/password/store', [AuthController::class, 'storePassword'])->name('password.store');
 });
 
 Route::middleware('auth')->group(function () {
@@ -70,6 +72,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'profile:admin'])->g
          Route::get('/{organization}/edit', [AdminOrganizationController::class, 'edit'])->name('edit');
          Route::put('/{organization}', [AdminOrganizationController::class, 'update'])->name('update');
          Route::delete('/{organization}', [AdminOrganizationController::class, 'destroy'])->name('destroy');
+         Route::get('/users/{organization}', [AdminOrganizationController::class, 'users'])->name('users');
      });
 });
 

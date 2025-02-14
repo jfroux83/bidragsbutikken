@@ -4,6 +4,7 @@ import AdminLayout from "@/Layouts/AdminLayout";
 import PageLayout from "@/Components/UI/PageLayout";
 import Edit from "@/Pages/Admin/Organization/Edit";
 import {CornerDownLeft, Plus} from "lucide-react";
+import Users from "@/Pages/Admin/Organization/Users";
 
 type Tab = 'edit' | 'payment_methods' | 'vendors' | 'users';
 
@@ -126,7 +127,7 @@ const Container = ({
                         {activeTab === 'users' && (
                             <div>
                                 <h2 className="text-2xl font-medium mb-6">Users</h2>
-
+                                <Users organizationId={organization.id} />
                             </div>
                         )}
                     </div>

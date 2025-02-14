@@ -5,6 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @method static where(string $string, mixed $id)
+ * @method static create(array $array)
+ */
 class OrganizationUser extends Model
 {
     protected $table = 'organization_users';
@@ -12,6 +16,11 @@ class OrganizationUser extends Model
     protected $fillable = [
         'organization_id',
         'user_id',
+    ];
+
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     // relationships

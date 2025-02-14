@@ -155,6 +155,7 @@ const Edit = ({
                     onChange={(e: any) => setData('email', e.target.value)}
                     error={errors.email}
                     suffix={<Mail />}
+                    required={true}
                 />
             </div>
 

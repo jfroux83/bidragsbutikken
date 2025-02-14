@@ -9,6 +9,13 @@ use Illuminate\Notifications\Notifiable;
 
 /**
  * @method static create(array $array)
+ * @method static whereIn(string $string, $orgUsers)
+ * @property mixed $password_reset_token_expiry
+ * @property mixed $password_change_required
+ * @property mixed $password_reset_token
+ * @property mixed $email
+ * @property mixed $id
+ * @property mixed $name
  */
 class User extends Authenticatable
 {
@@ -20,10 +27,14 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'status',
         'name',
         'email',
         'password',
-        'locale'
+        'locale',
+        'password_change_required',
+        'password_reset_token',
+        'password_reset_token_expiry'
     ];
 
     /**
@@ -46,11 +57,46 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'password_change_required' => 'boolean',
+            'status' => 'boolean',
+            'password_reset_token_expiry' => 'datetime',
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
         ];
     }
 
     public function profile(): HasOneThrough
     {
         return $this->hasOneThrough(Profile::class, User::class, 'id', 'id');
+    }
+
+    /*
+     * Methods
+     */
+
+    // Add a helper method to check if password reset token is expired
+    public function isPasswordResetTokenExpired(): bool
+    {
+        if (!$this->password_reset_token_expiry) {
+            return true;
+        }
+
+        return $this->password_reset_token_expiry->isPast();
+    }
+
+    // Add a helper method to check if user needs to change password
+    public function requiresPasswordChange(): bool
+    {
+        return $this->password_change_required;
+    }
+
+    // Add a helper method to clear password reset data
+    public function clearPasswordResetData(): void
+    {
+        $this->update([
+            'password_reset_token' => null,
+            'password_reset_token_expiry' => null,
+            'password_change_required' => false,
+        ]);
     }
 }

@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Organization;
+use App\Models\OrganizationUser;
 use App\Models\PostalCode;
+use App\Models\User;
+use App\Services\UserRegistrationService;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
 use Inertia\Response;
@@ -12,6 +16,13 @@ use Inertia\ResponseFactory;
 
 class AdminOrganizationController extends Controller
 {
+    protected UserRegistrationService $userRegistrationService;
+
+    public function __construct(UserRegistrationService $userRegistrationService)
+    {
+        $this->userRegistrationService = $userRegistrationService;
+    }
+
     public function index(): Response|ResponseFactory
     {
         try {
@@ -60,11 +71,11 @@ class AdminOrganizationController extends Controller
             'city' => [],
             'postalCode' => [],
             'telephone' => [],
-            'email' => [],
+            'email' => ['required', 'email'],
         ]);
 
         try {
-            Organization::create([
+            $organization = Organization::create([
                 'status' => $validate['status'],
                 'name' => $validate['name'],
                 'registration_number' => $validate['registrationNumber'],
@@ -77,6 +88,14 @@ class AdminOrganizationController extends Controller
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
+
+            $registration = $this->userRegistrationService->userRegistration('organization', $organization->id, $validate['email']);
+
+            if (!$registration) {
+                return redirect()
+                    ->route('admin.organization.index')
+                    ->with('error', 'Organization was successfully created but the user registration failed. Please investigate the logs');
+            }
 
             return redirect()
                 ->route('admin.organization.index')
@@ -153,6 +172,30 @@ class AdminOrganizationController extends Controller
     }
 
     public function destroy(Organization $organization) {}
+
+    public function users(Organization $organization): JsonResponse
+    {
+        $orgUsers = OrganizationUser::where('organization_id', $organization->id)
+            ->get()
+            ->pluck('user_id')
+            ->toArray();
+
+        $users = User::whereIn('id', $orgUsers)
+            ->orderBy('name')
+            ->get()
+            ->map(fn ($user) => [
+                'id' => $user->id,
+                'status' => (bool) $user->status,
+                'name' => $user->name,
+                'email' => $user->email,
+                'locale' => $user->locale,
+            ]);
+
+        return response()->json([
+            'message' => 'success',
+            'users' => $users,
+        ]);
+    }
 
     private function getPostalCodes()
     {
