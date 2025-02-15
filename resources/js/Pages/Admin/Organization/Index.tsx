@@ -4,7 +4,8 @@ import AdminLayout from "@/Layouts/AdminLayout";
 import PageLayout from "@/Components/UI/PageLayout";
 import {ClientDataTable} from "@/Components/DataTable/ClientDataTable";
 import {Action} from "@/Components/DataTable/DataTable";
-import {Edit, Plus} from "lucide-react";
+import {Edit, Plus, Trash2} from "lucide-react";
+import ConfirmationDialog from "@/Components/UI/ConfirmationDialog";
 
 interface Organization {
     id: number;
@@ -28,6 +29,8 @@ const Index = ({
 }: Props) => {
 
     const [filteredData, setFilteredData] = useState(initialData);
+    const [deleteConfirm, setDeleteConfirm] = useState(false);
+    const [recordToDelete, setRecordToDelete] = useState<Organization | null>(null);
 
     const columns = [
         {
@@ -105,8 +108,20 @@ const Index = ({
         router.get(`/admin/organization/${row.id}/edit`);
     };
 
+    const handleDelete = (row: Organization) => {
+        setRecordToDelete(row);
+        setDeleteConfirm(true);
+    };
+
+    const confirmDelete = () => {
+        if (recordToDelete) {
+            router.delete(`/admin/organization/${recordToDelete.id}`);
+        }
+    };
+
     const actions: Action<Organization>[] = [
-        { label: 'Edit Organization', icon: Edit, onClick: handleEdit, variant: 'secondary' }
+        { label: 'Edit Organization', icon: Edit, onClick: handleEdit, variant: 'secondary' },
+        { label: 'Delete Organization', icon: Trash2, onClick: handleDelete, variant: 'danger' }
     ];
 
     const actionsRoot = [
@@ -128,6 +143,19 @@ const Index = ({
                     columns={columns}
                     data={initialData}
                     actions={actions}
+                />
+
+                <ConfirmationDialog
+                    isOpen={deleteConfirm}
+                    onClose={() => {
+                        setDeleteConfirm(false);
+                        setRecordToDelete(null);
+                    }}
+                    onConfirm={confirmDelete}
+                    title='Delete Organization'
+                    message={`Are you sure you want to delete organization ${recordToDelete?.name}? This action cannot be undone.`}
+                    confirmText='Delete'
+                    type='danger'
                 />
             </PageLayout>
         </AdminLayout>

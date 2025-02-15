@@ -73,6 +73,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'profile:admin'])->g
          Route::put('/{organization}', [AdminOrganizationController::class, 'update'])->name('update');
          Route::delete('/{organization}', [AdminOrganizationController::class, 'destroy'])->name('destroy');
          Route::get('/users/{organization}', [AdminOrganizationController::class, 'users'])->name('users');
+         Route::post('/users', [AdminOrganizationController::class, 'destroyUser'])->name('destroy-user');
+         Route::post('/users/password-reset', [AdminOrganizationController::class, 'passwordReset'])->name('password-reset');
      });
 });
 

@@ -171,30 +171,74 @@ class AdminOrganizationController extends Controller
         }
     }
 
-    public function destroy(Organization $organization) {}
+    public function destroy(Organization $organization): RedirectResponse
+    {
+        try {
+            $organization->delete();
+
+            return redirect()
+                ->route('admin.organization.index')
+                ->with('success', 'Organization deleted successfully.');
+
+        } catch (Exception $e) {
+            Log::channel('custom_errors')->error(AdminOrganizationController::class . '::destroy(): ' . $e->getMessage());
+            return redirect()
+                ->back()
+                ->with('error', 'Something went wrong. Please try again later.');
+        }
+    }
 
     public function users(Organization $organization): JsonResponse
     {
-        $orgUsers = OrganizationUser::where('organization_id', $organization->id)
-            ->get()
-            ->pluck('user_id')
-            ->toArray();
-
-        $users = User::whereIn('id', $orgUsers)
-            ->orderBy('name')
-            ->get()
-            ->map(fn ($user) => [
-                'id' => $user->id,
-                'status' => (bool) $user->status,
-                'name' => $user->name,
-                'email' => $user->email,
-                'locale' => $user->locale,
-            ]);
-
         return response()->json([
             'message' => 'success',
-            'users' => $users,
+            'users' => $this->getOrganizationUsers($organization->id),
         ]);
+    }
+
+    public function destroyUser(): JsonResponse
+    {
+        $validate = request()->validate([
+            'organizationId' => ['required'],
+            'userId' => ['required'],
+        ]);
+
+        try {
+            OrganizationUser::where('user_id', $validate['userId'])->delete();
+            User::find($validate['userId'])->delete();
+
+            return response()->json([
+                'message' => 'success',
+                'users' => $this->getOrganizationUsers($validate['organizationId']),
+            ]);
+
+        } catch (Exception $e) {
+            Log::channel('custom_errors')->error(AdminOrganizationController::class . '::destroyUser(): ' . $e->getMessage());
+            return response()->json([
+                'message' => 'error',
+            ]);
+        }
+    }
+
+    public function passwordReset(User $user): JsonResponse
+    {
+        try {
+            $temporaryPassword = $this->userRegistrationService->generateTempPassword();
+            $user->password = $temporaryPassword;
+            $user->save();
+
+            // dispatch(new SendUserPasswordEmailJob($user, $temporaryPassword));
+
+            return response()->json([
+                'message' => 'success',
+            ]);
+
+        } catch (Exception $e) {
+            Log::channel('custom_errors')->error(AdminOrganizationController::class . '::resetPassword(): ' . $e->getMessage());
+            return response()->json([
+                'message' => 'error',
+            ]);
+        }
     }
 
     private function getPostalCodes()
@@ -205,6 +249,25 @@ class AdminOrganizationController extends Controller
             ->map(fn ($postalCode) => [
                 'label' => $postalCode->postal_code . ', ' . $postalCode->city,
                 'value' => (string) $postalCode->postal_code,
+            ]);
+    }
+
+    private function getOrganizationUsers($organizationId)
+    {
+        $orgUsers = OrganizationUser::where('organization_id', $organizationId)
+            ->get()
+            ->pluck('user_id')
+            ->toArray();
+
+        return User::whereIn('id', $orgUsers)
+            ->orderBy('name')
+            ->get()
+            ->map(fn ($user) => [
+                'id' => $user->id,
+                'status' => (bool) $user->status,
+                'name' => $user->name,
+                'email' => $user->email,
+                'locale' => $user->locale,
             ]);
     }
 }

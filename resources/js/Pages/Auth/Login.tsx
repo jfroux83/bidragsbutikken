@@ -28,9 +28,9 @@ const Login = () => {
                         <div className="text-center space-y-2">
                             <div className="flex justify-center mb-6">
                                 <img
-                                    src=""
+                                    src="/images/dummy.svg"
                                     alt="Logo"
-                                    className="h-20 w-auto object-contain"
+                                    className="h-12 w-auto object-contain"
                                 />
                             </div>
                             <h2 className="text-3xl font-bold text-gray-900">Bidragsbutikken Login</h2>

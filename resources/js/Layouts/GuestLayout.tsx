@@ -14,8 +14,8 @@ const GuestLayout = ({ children }: Props) => {
                 {/* Logo/Branding */}
                 <div className="mb-8">
                     <img
-                        src="/images/related-logo.webp"
-                        alt="RelatED Logo"
+                        src="/images/dummy.svg"
+                        alt="Lorum Ipsum Logo"
                         className="h-12 w-auto"
                     />
                 </div>

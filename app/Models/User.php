@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -10,12 +11,15 @@ use Illuminate\Notifications\Notifiable;
 /**
  * @method static create(array $array)
  * @method static whereIn(string $string, $orgUsers)
+ * @method static find(mixed $userId)
+ * @method static where(string $string, array|string|null $email)
  * @property mixed $password_reset_token_expiry
  * @property mixed $password_change_required
  * @property mixed $password_reset_token
  * @property mixed $email
  * @property mixed $id
  * @property mixed $name
+ * @property mixed|string $password
  */
 class User extends Authenticatable
 {
@@ -65,10 +69,11 @@ class User extends Authenticatable
         ];
     }
 
-    public function profile(): HasOneThrough
+    public function profile(): BelongsToMany
     {
-        return $this->hasOneThrough(Profile::class, User::class, 'id', 'id');
+        return $this->belongsToMany(Profile::class, 'user_profiles', 'user_id', 'profile_id');
     }
+
 
     /*
      * Methods

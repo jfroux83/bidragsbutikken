@@ -30,9 +30,9 @@ class CheckUserProfile
         }
 
         // Check if profile matches required type
-        if ($user->profile->name !== $profileType) {
+        if ($user->profile->first()->name !== $profileType) {
             return redirect()
-                ->route($user->profile->name . '.dashboard')
+                ->route($user->profile->first()->name . '.dashboard')
                 ->with('error', 'Unauthorized access attempt.');
         }
 

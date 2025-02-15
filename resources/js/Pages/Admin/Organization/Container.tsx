@@ -44,7 +44,7 @@ const Container = ({
     }
 
     const actionsRoot = [
-        { label: "Return", icon: CornerDownLeft, onClick: handleReturn },
+        { label: "Return", icon: CornerDownLeft, onClick: handleReturn, variant: 'secondary' },
     ];
 
     return (
@@ -53,6 +53,7 @@ const Container = ({
             <PageLayout
                 title="Organization | Edit"
                 containerClassName="bg-white shadow rounded-md mt-2"
+                // @ts-ignore
                 actions={actionsRoot}
                 fullWidth={true}
             >

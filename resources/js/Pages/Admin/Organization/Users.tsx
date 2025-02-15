@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from "react";
 import {ClientDataTable} from "@/Components/DataTable/ClientDataTable";
-import {KeyRound} from "lucide-react";
+import {KeyRound, Trash2} from "lucide-react";
 import {Action} from "@/Components/DataTable/DataTable";
 import axios from "axios";
 import {toast} from "@/Lib/toast";
 import Spinner from "@/Components/UI/Spinner";
+import ConfirmationDialog from "@/Components/UI/ConfirmationDialog";
 
 interface Props {
     organizationId: number;
@@ -16,6 +17,8 @@ const Users = ({
 
     const [isLoading, setIsLoading] = useState(true);
     const [users, setUsers] = useState([]);
+    const [deleteConfirm, setDeleteConfirm] = useState(false);
+    const [recordToDelete, setRecordToDelete] = useState(null);
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -73,10 +76,64 @@ const Users = ({
         }
     ];
 
-    const handlePasswordReset = () => {};
+    const handlePasswordReset = async (row: any) => {
+        try {
+            const response = await axios.post('/admin/organization/users/password-reset', {
+                userId: row.id
+            }, {
+                headers: {
+                    "Content-Type": "application/json",
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+
+            if (response.data.message === 'success') {
+                toast.success('User password successfully reset');
+            } else {
+                toast.error('Something went wrong. Please try again');
+            }
+
+        } catch (error) {
+            console.error(error.message);
+            toast.error('Something went wrong. Please try again');
+        }
+    };
+
+    const handleDelete = (row: any) => {
+        setRecordToDelete(row);
+        setDeleteConfirm(true);
+    };
+
+    const confirmDelete = async () => {
+        if (deleteConfirm) {
+            try {
+                const response = await axios.post('/admin/organization/users', {
+                    organizationId,
+                    userId: recordToDelete.id
+                }, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (response.data.message === 'success') {
+                    setUsers(response.data.users);
+                    toast.success('Users successfully loaded');
+                } else {
+                    toast.error('Something went wrong. Please try again');
+                }
+
+            } catch (error) {
+                console.error(error.message);
+                toast.error('Something went wrong. Please try again');
+            }
+        }
+    };
 
     const actions: Action[] = [
         { label: 'Reset Password', icon: KeyRound, onClick: handlePasswordReset, variant: 'secondary' },
+        { label: 'Delete Organization User', icon: Trash2, onClick: handleDelete, variant: 'danger' }
     ];
 
     return (
@@ -84,11 +141,26 @@ const Users = ({
             {isLoading ? (
                 <Spinner />
             ) : (
-                <ClientDataTable
-                    columns={columns}
-                    data={users}
-                    actions={actions}
-                />
+                <div>
+                    <ClientDataTable
+                        columns={columns}
+                        data={users}
+                        actions={actions}
+                    />
+
+                    <ConfirmationDialog
+                        isOpen={deleteConfirm}
+                        onClose={() => {
+                            setDeleteConfirm(false);
+                            setRecordToDelete(null);
+                        }}
+                        onConfirm={confirmDelete}
+                        title='Delete Organization User'
+                        message={`Are you sure you want to delete organization user ${recordToDelete?.name}? This action cannot be undone.`}
+                        confirmText='Delete'
+                        type='danger'
+                    />
+                </div>
             )}
         </>
     );
