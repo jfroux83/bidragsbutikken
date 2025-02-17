@@ -1,51 +1,96 @@
 <?php
 
+use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\AdminOrganizationController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\CustomerAuthController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\CustomerDashboardController;
+use App\Http\Controllers\OrganizationDashboardController;
+use App\Http\Controllers\PostalCodeController;
+use App\Http\Controllers\SystemJobController;
+use App\Http\Controllers\VendorDashboardController;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/', function () {
+    if (!auth()->check()) {
+        return redirect()->route('login');
+    }
+
+    // Get user's profile and redirect accordingly
+    $user = auth()->user();
+    $profile = $user->profile;
+
+    return match ($profile->name) {
+        'admin' => redirect()->route('admin.dashboard'),
+        'organization' => redirect()->route('organization.dashboard'),
+        'seller' => redirect()->route('seller.dashboard'),
+        'customer' => redirect()->route('customer.dashboard'),
+        default => redirect()->route('login')
+    };
+});
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'index'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
-
-    Route::prefix('/customers')->name('customer.')->group(function () {
-        Route::get('/login', [CustomerAuthController::class, 'showLogin'])->name('login');
-        Route::post('/login', [CustomerAuthController::class, 'login'])->name('login.store');
-    });
+    Route::get('/password/create/{token}', [AuthController::class, 'createPassword'])->name('password.create');
+    Route::post('/password/store', [AuthController::class, 'storePassword'])->name('password.store');
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
-    Route::prefix('/customers')->name('customer.')->group(function () {
-        Route::prefix('/profile')->name('profile.')->group(function () {
-            Route::get('/{customer}', [])->name('index');
-            Route::put('/{customer}', [])->name('update');
-        });
-
-        Route::prefix('/my-products')->name('my-products.')->group(function () {
-            Route::get('/{customer}', [])->name('index');
-            Route::put('/{customer}', [])->name('update');
-        });
-
-        Route::prefix('/products')->name('products.')->group(function () {
-            Route::get('/', [])->name('index');
-            Route::post('/add', [])->name('add');
-        });
-
-        Route::post('/logout', [CustomerAuthController::class, 'logout'])->name('logout');
-    });
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
-Route::get('/', function () {
-    if (auth()->check()) {
-        return redirect()
-            ->route('dashboard');
-    }
+// System Admin Routes
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'profile:admin'])->group(function () {
+     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
-    return redirect()
-        ->route('login');
+    // System Jobs routes
+    Route::prefix('system-jobs')->name('jobs.')->group(function () {
+        Route::get('/', [SystemJobController::class, 'index'])->name('index');
+        Route::get('/active-count', [SystemJobController::class, 'activeCount'])->name('active-count');
+        Route::get('/list', [SystemJobController::class, 'list'])->name('list');
+        Route::get('{jobId}', [SystemJobController::class, 'cancel'])->name('cancel');
+    });
+
+     Route::prefix('configuration')->name('configuration.')->group(function () {
+         Route::prefix('postal-code')->name('postal-code.')->group(function () {
+             Route::get('/', [PostalCodeController::class, 'index'])->name('index');
+             Route::get('/create', [PostalCodeController::class, 'create'])->name('create');
+             Route::post('/', [PostalCodeController::class, 'store'])->name('store');
+             Route::get('/{postalCode}/edit', [PostalCodeController::class, 'edit'])->name('edit');
+             Route::put('/{postalCode}', [PostalCodeController::class, 'update'])->name('update');
+             Route::delete('/{postalCode}', [PostalCodeController::class, 'destroy'])->name('destroy');
+             Route::get('/download-template', [PostalCodeController::class, 'downloadTemplate'])->name('downloadTemplate');
+             Route::get('/upload', [PostalCodeController::class, 'upload'])->name('upload');
+             Route::post('/upload', [PostalCodeController::class, 'uploadProcess'])->name('upload-process');
+         });
+     });
+
+     Route::prefix('organization')->name('organization.')->group(function () {
+         Route::get('/', [AdminOrganizationController::class, 'index'])->name('index');
+         Route::get('/create', [AdminOrganizationController::class, 'create'])->name('create');
+         Route::post('/', [AdminOrganizationController::class, 'store'])->name('store');
+         Route::get('/{organization}/edit', [AdminOrganizationController::class, 'edit'])->name('edit');
+         Route::put('/{organization}', [AdminOrganizationController::class, 'update'])->name('update');
+         Route::delete('/{organization}', [AdminOrganizationController::class, 'destroy'])->name('destroy');
+         Route::get('/users/{organization}', [AdminOrganizationController::class, 'users'])->name('users');
+         Route::post('/users', [AdminOrganizationController::class, 'destroyUser'])->name('destroy-user');
+         Route::post('/users/password-reset', [AdminOrganizationController::class, 'passwordReset'])->name('password-reset');
+     });
+});
+
+// Organization Routes
+Route::prefix('organization')->name('organization.')->middleware(['auth', 'profile:organization'])->group(function () {
+     Route::get('/dashboard', [OrganizationDashboardController::class, 'index'])->name('dashboard');
+});
+
+// Vendor Routes
+Route::prefix('vendor')->name('vendor.')->middleware(['auth', 'profile:vendor'])->group(function () {
+     Route::get('/dashboard', [VendorDashboardController::class, 'index'])->name('dashboard');
+});
+
+// Customer Routes
+Route::prefix('customer')->name('customer.')->middleware(['auth', 'profile:customer'])->group(function () {
+     Route::get('/dashboard', [CustomerDashboardController::class, 'index'])->name('dashboard');
 });
 
 // include 'tests.php';

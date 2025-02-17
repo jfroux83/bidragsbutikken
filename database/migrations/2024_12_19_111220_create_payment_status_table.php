@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payment_status', function (Blueprint $table) {
+        /*Schema::create('payment_status', function (Blueprint $table) {
             $table->id();
             $table->integer('status_code');
             $table->string('status_name');
             $table->timestamps();
-        });
+        });*/
     }
 
     /**
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('payment_status');
+        /*Schema::dropIfExists('payment_status');*/
     }
 };

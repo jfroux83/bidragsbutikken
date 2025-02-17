@@ -9,7 +9,7 @@ import Submit from "@/Components/Forms/Submit";
 const Login = () => {
 
     const { data, setData, post, processing, errors } = useForm({
-        username: '',
+        email: '',
         password: ''
     });
 
@@ -28,9 +28,9 @@ const Login = () => {
                         <div className="text-center space-y-2">
                             <div className="flex justify-center mb-6">
                                 <img
-                                    src=""
+                                    src="/images/dummy.svg"
                                     alt="Logo"
-                                    className="h-20 w-auto object-contain"
+                                    className="h-12 w-auto object-contain"
                                 />
                             </div>
                             <h2 className="text-3xl font-bold text-gray-900">Bidragsbutikken Login</h2>
@@ -40,11 +40,11 @@ const Login = () => {
                         {/* Form */}
                         <Form onSubmit={handleSubmit}>
                             <TextField
-                                name="username"
-                                label="Username"
-                                value={data.username}
-                                onChange={(e: any) => setData('username', e.target.value)}
-                                error={errors['username']}
+                                name="email"
+                                label="Email"
+                                value={data.email}
+                                onChange={(e: any) => setData('email', e.target.value)}
+                                error={errors['email']}
                             />
 
                             <Password
