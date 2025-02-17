@@ -38,7 +38,7 @@ class CheckUserProfile
 
         // Add profile information to every response
         if (!$request->is('logout')) {
-            $request->attributes->add(['current_profile' => $user->profile]);
+            $request->attributes->add(['current_profile' => $user->profile->first()->name]);
         }
 
         return $next($request);

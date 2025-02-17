@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\UserPasswordResetJob;
 use App\Models\Organization;
 use App\Models\OrganizationUser;
 use App\Models\PostalCode;
@@ -220,14 +221,19 @@ class AdminOrganizationController extends Controller
         }
     }
 
-    public function passwordReset(User $user): JsonResponse
+    public function passwordReset(): JsonResponse
     {
+        $validate = request()->validate([
+            'userId' => ['required'],
+        ]);
+
         try {
+            $user = User::find($validate['userId']);
             $temporaryPassword = $this->userRegistrationService->generateTempPassword();
             $user->password = $temporaryPassword;
             $user->save();
 
-            // dispatch(new SendUserPasswordEmailJob($user, $temporaryPassword));
+            dispatch(new UserPasswordResetJob($user, $temporaryPassword));
 
             return response()->json([
                 'message' => 'success',
