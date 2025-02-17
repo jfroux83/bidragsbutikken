@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('delivery_plan_headers', function (Blueprint $table) {
+        /*Schema::create('delivery_plan_headers', function (Blueprint $table) {
             $table->id();
             $table->string('doc_num', 20)->nullable();
             $table->unsignedBigInteger('customer_id');
             $table->date('created_at');
             $table->date('updated_at');
             $table->string('period', 10);
-        });
+        });*/
     }
 
     /**
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('delivery_plan_headers');
+        // Schema::dropIfExists('delivery_plan_headers');
     }
 };

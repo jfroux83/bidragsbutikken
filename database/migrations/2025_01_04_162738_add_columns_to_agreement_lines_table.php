@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('agreement_lines', function (Blueprint $table) {
+        /*Schema::table('agreement_lines', function (Blueprint $table) {
             $table->date('created_at')->nullable();
             $table->date('updated_at')->nullable();
             $table->string('first_delivery', 10)->nullable();
@@ -21,7 +21,7 @@ return new class extends Migration
             $table->integer('once_off_purchase')->default(0);
             $table->integer('processed')->default(0);
             $table->integer('locked')->default(0);
-        });
+        });*/
     }
 
     /**
@@ -29,7 +29,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('agreement_lines', function (Blueprint $table) {
+        /*Schema::table('agreement_lines', function (Blueprint $table) {
             $table->dropColumn('created_at');
             $table->dropColumn('updated_at');
             $table->dropColumn('first_delivery');
@@ -39,6 +39,6 @@ return new class extends Migration
             $table->dropColumn('once_off_purchase');
             $table->dropColumn('processed');
             $table->dropColumn('locked');
-        });
+        });*/
     }
 };

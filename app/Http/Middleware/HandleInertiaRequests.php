@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -41,6 +42,7 @@ class HandleInertiaRequests extends Middleware
                     'id' => $request->user()->id,
                     'name' => $request->user()->name,
                     'email' => $request->user()->email,
+                    'profile' => $request->user()->profile,
                 ] : null,
             ],
             'flash' => [
@@ -48,8 +50,15 @@ class HandleInertiaRequests extends Middleware
                 'error' => fn () => $request->session()->get('error'),
                 'info' => fn () => $request->session()->get('info'),
                 'warning' => fn () => $request->session()->get('warning'),
-                'activeJobsCount' => fn () => $request->session()->get('activeJobsCount'),
             ],
+            'activeJobsCount' => $this->getActiveJobsCount()
         ]);
+    }
+
+    private function getActiveJobsCount(): int
+    {
+        return DB::table('system_jobs')
+            ->whereIn('status', ['pending', 'processing'])
+            ->count();
     }
 }

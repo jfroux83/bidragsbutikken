@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('delivery_plan_headers', function (Blueprint $table) {
+        /*Schema::table('delivery_plan_headers', function (Blueprint $table) {
             $table->string('file_name', 255)->nullable();
-        });
+        });*/
     }
 
     /**
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('delivery_plan_headers', function (Blueprint $table) {
+        /*Schema::table('delivery_plan_headers', function (Blueprint $table) {
             $table->dropColumn('file_name');
-        });
+        });*/
     }
 };
