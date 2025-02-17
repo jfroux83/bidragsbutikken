@@ -15,24 +15,14 @@ export const versions: Version[] = [
         major: 1,
         minor: 0,
         patch: 0,
-        releaseDate: '2024-12-21',
+        releaseDate: '2025-02-17',
         notes: [
-            'Initial release'
+            'Initial project setup',
+            'Feature: Organization',
+            'Feature: Organization/Users',
+            'Feature: Postal Codes'
         ]
     },
-    {
-        major: 1,
-        minor: 1,
-        patch: 0,
-        releaseDate: '2025-02-10',
-        notes: [
-            'Feature: Audit Logs',
-            'Feature: System Jobs',
-            'Feature: Project schedule',
-            'Feature: Project attendance',
-            'Change: Qualification modules to qualification interventions'
-        ]
-    }
 ];
 
 // Helper functions
