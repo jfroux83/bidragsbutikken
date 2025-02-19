@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AdminOrganizationController;
+use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerDashboardController;
 use App\Http\Controllers\OrganizationDashboardController;
@@ -49,6 +50,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'profile:admin'])->g
         Route::get('/active-count', [SystemJobController::class, 'activeCount'])->name('active-count');
         Route::get('/list', [SystemJobController::class, 'list'])->name('list');
         Route::get('{jobId}', [SystemJobController::class, 'cancel'])->name('cancel');
+    });
+
+    // Audit Logs
+    Route::prefix('logs')->name('logs.')->group(function () {
+        Route::get('/audit', [AuditLogController::class, 'index'])->name('audit.index');
+        Route::post('/audit', [AuditLogController::class, 'show'])->name('audit.show');
     });
 
      Route::prefix('configuration')->name('configuration.')->group(function () {

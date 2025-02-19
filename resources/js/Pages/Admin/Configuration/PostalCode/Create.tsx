@@ -84,7 +84,7 @@ const Create = () => {
                     />
                     <TextField
                         name="longitude"
-                        label="longitude"
+                        label="Longitude"
                         value={data.longitude}
                         onChange={(e: any) => setData('longitude', e.target.value)}
                         error={errors.longitude}
