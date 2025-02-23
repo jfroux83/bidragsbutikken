@@ -7,6 +7,7 @@ use App\Models\OrganizationUser;
 use App\Models\Profile;
 use App\Models\User;
 use App\Models\UserProfile;
+use App\Models\VendorUser;
 use DateTime;
 use Illuminate\Support\Str;
 
@@ -42,10 +43,20 @@ class UserRegistrationService
             'profile_id' => $profileId,
         ]);
 
-        OrganizationUser::create([
-            'organization_id' => $registerId,
-            'user_id' => $user->id,
-        ]);
+        switch ($type) {
+            case 'organization':
+                OrganizationUser::create([
+                    'organization_id' => $registerId,
+                    'user_id' => $user->id,
+                ]);
+                break;
+            case 'vendor':
+                VendorUser::create([
+                    'vendor_id' => $registerId,
+                    'user_id' => $user->id,
+                ]);
+                break;
+        }
 
         dispatch(new UserRegistrationJob($user, $tempPassword, $token));
 

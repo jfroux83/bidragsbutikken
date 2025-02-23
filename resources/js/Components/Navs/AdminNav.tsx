@@ -25,6 +25,12 @@ const navigation: NavItem[] = [
         ]
     },
     {
+        title: 'Vendors',
+        items: [
+            { title: 'View Vendors', href: '/admin/vendor', description: 'Manage Vendors' },
+        ]
+    },
+    {
         title: 'Configurations',
         items: [
             { title: 'Postal Codes', href: '/admin/configuration/postal-code', description: 'Manage Postal Codes' },
