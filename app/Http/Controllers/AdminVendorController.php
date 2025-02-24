@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\UserPasswordResetJob;
 use App\Models\PostalCode;
+use App\Models\User;
 use App\Models\Vendor;
+use App\Models\VendorUser;
 use App\Services\UserRegistrationService;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
 use Inertia\Response;
@@ -114,7 +118,7 @@ class AdminVendorController extends Controller
 
     public function edit(Vendor $vendor): Response|ResponseFactory
     {
-        return inertia('Admin/Vendor/Edit', [
+        return inertia('Admin/Vendor/Container', [
             'vendor' => [
                 'id' => $vendor->id,
                 'status' => (bool) $vendor->status,
@@ -125,7 +129,7 @@ class AdminVendorController extends Controller
                 'postalCode' => $vendor->postal_code,
                 'telephone' => $vendor->telephone,
                 'email' => $vendor->email,
-                'receiveOrdersEmail' => $vendor->receive_orders_email,
+                'receiveOrdersEmail' => (bool) $vendor->receive_orders_email,
                 'freeShippingAmount' => $vendor->free_shipping_amount,
                 'adminFee' => $vendor->admin_fee,
                 'paymentFee' => $vendor->payment_fee,
@@ -138,18 +142,137 @@ class AdminVendorController extends Controller
         ]);
     }
 
-    public function update(Vendor $vendor) {}
+    public function update(Vendor $vendor): RedirectResponse
+    {
+        $validate = request()->validate([
+            'status' => ['required'],
+            'name' => ['required'],
+            'address1' => [],
+            'address2' => [],
+            'city' => [],
+            'postalCode' => [],
+            'telephone' => [],
+            'email' => ['required', 'email'],
+            'receiveOrdersEmail' => ['required'],
+            'freeShippingAmount' => ['required', 'numeric'],
+            'adminFee' => ['required', 'numeric'],
+            'paymentFee' => ['required', 'numeric'],
+            'systemFee' => ['required', 'numeric'],
+            'contributionFee' => ['required', 'numeric'],
+            'bonusFee' => ['required', 'numeric'],
+            'maxDeliveryDistance' => ['required', 'numeric'],
+        ]);
 
-    public function destroy(Vendor $vendor) {}
+        try {
+            $vendor->update([
+                'status' => $validate['status'],
+                'name' => $validate['name'],
+                'address_1' => $validate['address1'],
+                'address_2' => $validate['address2'],
+                'city' => $validate['city'],
+                'postal_code' => $validate['postalCode'],
+                'telephone' => $validate['telephone'],
+                'email' => $validate['email'],
+                'receive_orders_email' => $validate['receiveOrdersEmail'],
+                'free_shipping_amount' => $validate['freeShippingAmount'],
+                'admin_fee' => $validate['adminFee'],
+                'payment_fee' => $validate['paymentFee'],
+                'system_fee' => $validate['systemFee'],
+                'contribution_fee' => $validate['contributionFee'],
+                'bonus_fee' => $validate['bonusFee'],
+                'max_delivery_distance' => $validate['maxDeliveryDistance'],
+            ]);
+
+            return redirect()
+                ->route('admin.vendor.index')
+                ->with('success', 'Vendor updated successfully.');
+
+        } catch (Exception $e) {
+            Log::channel('custom_errors')->error(AdminVendorController::class . '::update(): ' . $e->getMessage());
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Something went wrong. Please try again later.');
+        }
+    }
+
+    public function destroy(Vendor $vendor): RedirectResponse
+    {
+        try {
+            $vendor->delete();
+
+            return redirect()
+                ->route('admin.vendor.index')
+                ->with('success', 'Vendor deleted successfully.');
+
+        } catch (Exception $e) {
+            Log::channel('custom_errors')->error(AdminVendorController::class . '::destroy(): ' . $e->getMessage());
+            return redirect()
+                ->back()
+                ->with('error', 'Something went wrong. Please try again later.');
+        }
+    }
 
     /**
      * Vendor Users
      */
-    public function users(Vendor $vendor) {}
+    public function users(Vendor $vendor): JsonResponse
+    {
+        return response()->json([
+            'message' => 'success',
+            'users' => $this->getVendorUsers($vendor->id)
+        ]);
+    }
 
-    public function destroyUser() {}
+    public function destroyUser(): JsonResponse
+    {
+        $validate = request()->validate([
+            'vendorId' => ['required'],
+            'userId' => ['required'],
+        ]);
 
-    public function passwordReset() {}
+        try {
+            VendorUser::where('user_id', $validate['userId'])->delete();
+            User::find($validate['userId'])->delete();
+
+            return response()->json([
+                'message' => 'success',
+                'users' => $this->getVendorUsers($validate['vendorId'])
+            ]);
+
+        } catch (Exception $e) {
+            Log::channel('custom_errors')->error(AdminVendorController::class . '::destroyUser(): ' . $e->getMessage());
+            return response()->json([
+                'message' => 'error',
+            ]);
+        }
+    }
+
+    public function passwordReset(): JsonResponse
+    {
+        $validate = request()->validate([
+            'userId' => ['required'],
+        ]);
+
+        try {
+            $user = User::find($validate['userId']);
+            $temporaryPassword = $this->userRegistrationService->generateTempPassword();
+            $user->password = $temporaryPassword;
+            $user->save();
+
+            dispatch(new UserPasswordResetJob($user, $temporaryPassword));
+
+            return response()->json([
+                'message' => 'success',
+            ]);
+
+        } catch (Exception $e) {
+            Log::channel('custom_errors')->error(AdminVendorController::class . '::passwordReset(): ' . $e->getMessage());
+            return response()->json([
+                'message' => 'error',
+            ]);
+        }
+    }
 
     /**
      * Helper methods
@@ -162,6 +285,25 @@ class AdminVendorController extends Controller
             ->map(fn ($postalCode) => [
                 'label' => $postalCode->postal_code . ', ' . $postalCode->city,
                 'value' => (string) $postalCode->postal_code,
+            ]);
+    }
+
+    private function getVendorUsers($vendorId)
+    {
+        $vendorUsers = VendorUser::where('vendor_id', $vendorId)
+            ->get()
+            ->pluck('user_id')
+            ->toArray();
+
+        return User::whereIn('id', $vendorUsers)
+            ->orderBy('name')
+            ->get()
+            ->map(fn ($user) => [
+                'id' => $user->id,
+                'status' => (bool) $user->status,
+                'name' => $user->name,
+                'email' => $user->email,
+                'locale' => $user->locale,
             ]);
     }
 }

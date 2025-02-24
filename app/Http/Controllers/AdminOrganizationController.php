@@ -189,6 +189,9 @@ class AdminOrganizationController extends Controller
         }
     }
 
+    /**
+     * Organization Users
+     */
     public function users(Organization $organization): JsonResponse
     {
         return response()->json([
@@ -247,6 +250,10 @@ class AdminOrganizationController extends Controller
         }
     }
 
+
+    /**
+     * Helper methods
+     */
     private function getPostalCodes()
     {
         return PostalCode::where('status', 1)
