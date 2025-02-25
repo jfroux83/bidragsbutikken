@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @method static orderBy(string $string)
  * @method static create(array $array)
+ * @method static where(string $string, true $true)
+ * @method static whereIn(string $string, $vendorIds)
  * @property mixed $id
  * @property mixed $status
  * @property mixed $name

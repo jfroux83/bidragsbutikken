@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Jobs\UserPasswordResetJob;
 use App\Models\Organization;
 use App\Models\OrganizationUser;
+use App\Models\OrganizationVendor;
 use App\Models\PostalCode;
 use App\Models\User;
+use App\Models\Vendor;
 use App\Services\UserRegistrationService;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -244,6 +246,101 @@ class AdminOrganizationController extends Controller
 
         } catch (Exception $e) {
             Log::channel('custom_errors')->error(AdminOrganizationController::class . '::resetPassword(): ' . $e->getMessage());
+            return response()->json([
+                'message' => 'error',
+            ]);
+        }
+    }
+
+    /**
+     * Organization Vendors
+     */
+    public function vendors(Organization $organization): JsonResponse
+    {
+        try {
+            $vendors = Vendor::where('status', true)
+                ->orderBy('name')
+                ->get()
+                ->map(fn ($vendor) => [
+                    'id' => $vendor->id,
+                    'title' => $vendor->name,
+                ]);
+
+            $vendorIds = OrganizationVendor::where('organization_id', $organization->id)
+                ->get()
+                ->pluck('vendor_id')
+                ->toArray();
+
+            $organizationVendors = Vendor::whereIn('id', $vendorIds)
+                ->orderBy('name')
+                ->get()
+                ->map(fn ($vendor) => [
+                    'id' => $vendor->id,
+                    'title' => $vendor->name,
+                ]);
+
+            // Filter out assigned vendors to get the not_assigned set
+            $notAssigned = $vendors->reject(function ($vendor) use ($vendorIds) {
+                return in_array($vendor['id'], $vendorIds);
+            })->values();
+
+            $sections = [
+                [
+                    'id' => 1,
+                    'key' => 'not_assigned',
+                    'title' => 'Not Assigned',
+                    'cards' => $notAssigned,
+                ],
+                [
+                    'id' => 2,
+                    'key' => 'assigned',
+                    'title' => 'Assigned',
+                    'cards' => $organizationVendors,
+                ]
+            ];
+
+            return response()->json([
+                'message' => 'success',
+                'dataset' => $sections,
+            ]);
+
+        } catch (Exception $e) {
+            Log::channel('custom_errors')->error(AdminOrganizationController::class . '::vendors(): ' . $e->getMessage());
+            return response()->json([
+                'message' => 'error',
+            ]);
+        }
+    }
+
+    public function vendorSave(): JsonResponse
+    {
+        $validate = request()->validate([
+            'organizationId' => ['required'],
+            'vendorId' => ['required'],
+        ]);
+
+        try {
+            $record = OrganizationVendor::where('organization_id', $validate['organizationId'])
+                ->where('vendor_id', $validate['vendorId'])
+                ->first();
+
+            if (!$record) {
+                OrganizationVendor::create([
+                    'organization_id' => $validate['organizationId'],
+                    'vendor_id' => $validate['vendorId'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            } else {
+                $record->delete();
+            }
+
+            return response()->json([
+                'message' => 'success',
+            ]);
+
+        } catch (Exception $e) {
+            Log::channel('custom_errors')->error(AdminOrganizationController::class . '::vendorSave(): ' . $e->getMessage());
             return response()->json([
                 'message' => 'error',
             ]);

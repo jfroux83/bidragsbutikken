@@ -6,9 +6,11 @@ use App\Http\Controllers\AdminVendorController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerDashboardController;
+use App\Http\Controllers\OrganizationCustomer;
 use App\Http\Controllers\OrganizationDashboardController;
 use App\Http\Controllers\PostalCodeController;
 use App\Http\Controllers\SystemJobController;
+use App\Http\Controllers\VendorCustomer;
 use App\Http\Controllers\VendorDashboardController;
 use Illuminate\Support\Facades\Route;
 
@@ -84,6 +86,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'profile:admin'])->g
          Route::get('/users/{organization}', [AdminOrganizationController::class, 'users'])->name('users');
          Route::post('/users', [AdminOrganizationController::class, 'destroyUser'])->name('destroy-user');
          Route::post('/users/password-reset', [AdminOrganizationController::class, 'passwordReset'])->name('password-reset');
+         // Organization->Vendors
+         Route::get('/vendors/{organization}', [AdminOrganizationController::class, 'vendors'])->name('vendors');
+         Route::post('/vendors/save', [AdminOrganizationController::class, 'vendorSave'])->name('vendor-save');
      });
 
      Route::prefix('vendor')->name('vendor.')->group(function () {
@@ -102,12 +107,32 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'profile:admin'])->g
 
 // Organization Routes
 Route::prefix('organization')->name('organization.')->middleware(['auth', 'profile:organization'])->group(function () {
-     Route::get('/dashboard', [OrganizationDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [OrganizationDashboardController::class, 'index'])->name('dashboard');
+
+    // Customers
+    Route::prefix('customer')->name('customer.')->group(function () {
+        Route::get('/', [OrganizationCustomer::class, 'index'])->name('index');
+        Route::get('/create', [OrganizationCustomer::class, 'create'])->name('create');
+        Route::post('/', [OrganizationCustomer::class, 'store'])->name('store');
+        Route::get('/{customer}/edit', [OrganizationCustomer::class, 'edit'])->name('edit');
+        Route::put('/{customer}', [OrganizationCustomer::class, 'update'])->name('update');
+        Route::delete('/{customer}', [OrganizationCustomer::class, 'destroy'])->name('destroy');
+    });
 });
 
 // Vendor Routes
 Route::prefix('vendor')->name('vendor.')->middleware(['auth', 'profile:vendor'])->group(function () {
      Route::get('/dashboard', [VendorDashboardController::class, 'index'])->name('dashboard');
+
+    // Customers
+    Route::prefix('customer')->name('customer.')->group(function () {
+        Route::get('/', [VendorCustomer::class, 'index'])->name('index');
+        Route::get('/create', [VendorCustomer::class, 'create'])->name('create');
+        Route::post('/', [VendorCustomer::class, 'store'])->name('store');
+        Route::get('/{customer}/edit', [VendorCustomer::class, 'edit'])->name('edit');
+        Route::put('/{customer}', [VendorCustomer::class, 'update'])->name('update');
+        Route::delete('/{customer}', [VendorCustomer::class, 'destroy'])->name('destroy');
+    });
 });
 
 // Customer Routes
