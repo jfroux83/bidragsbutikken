@@ -2,8 +2,8 @@ import {Head, router} from "@inertiajs/react";
 import OrganizationLayout from "@/Layouts/OrganizationLayout";
 import PageLayout from "@/Components/UI/PageLayout";
 import {ClientDataTable} from "@/Components/DataTable/ClientDataTable";
-import {BaseColumn} from "@/Components/DataTable/DataTable";
-import {Plus} from "lucide-react";
+import {Action, BaseColumn} from "@/Components/DataTable/DataTable";
+import {Pencil, Plus, Trash2} from "lucide-react";
 import React from "react";
 
 interface Customer {
@@ -27,8 +27,75 @@ const Index = ({
 
     const columns: BaseColumn<Customer>[] = [
         {
+            key: 'lastName',
+            title: 'Last Name',
+            filterable: true,
+            filterConfig: {
+                type: 'text',
+                placeholder: 'search...',
+            },
+            sortable: true
+        },
+        {
             key: 'firstName',
             title: 'First Name',
+            filterable: true,
+            filterConfig: {
+                type: 'text',
+                placeholder: 'search...',
+            },
+            sortable: true
+        },
+        {
+            key: 'email',
+            title: 'Email',
+            filterable: true,
+            filterConfig: {
+                type: 'text',
+                placeholder: 'search...',
+            },
+            sortable: true
+        },
+        {
+            key: 'telephone',
+            title: 'Telephone',
+            filterable: true,
+            filterConfig: {
+                type: 'text',
+                placeholder: 'search...',
+            },
+            sortable: true
+        },
+        {
+            key: 'city',
+            title: 'City',
+            filterable: true,
+            filterConfig: {
+                type: 'text',
+                placeholder: 'search...',
+            },
+            sortable: true
+        },
+        {
+            key: 'postalCode',
+            title: 'Postal Code',
+            filterable: true,
+            filterConfig: {
+                type: 'text',
+                placeholder: 'search...',
+            },
+            sortable: true
+        },
+        {
+            key: 'status',
+            title: 'Status',
+            type: 'status',
+            config: {
+                status: {
+                    'true': { label: "Active", className: "text-green-800 bg-green-100" },
+                    'false': { label: "Inactive", className: "text-gray-800 bg-red-100" },
+                }
+            }
         }
     ];
 
@@ -36,11 +103,20 @@ const Index = ({
         router.get('/organization/customer/create');
     };
 
+    const handleEdit = (customer: Customer) => {
+        router.get(`/organization/customer/${customer.id}/edit`);
+    };
+
+    const handleDelete = (customer: Customer) => {};
+
     const actionsRoot = [
         { label: "Register Customer", icon: Plus, onClick: handleCreate }
     ];
 
-    const actions = [];
+    const actions: Action<Customer>[] = [
+        { label: 'Edit Customer', icon: Pencil, onClick: handleEdit, variant: 'secondary' },
+        { label: 'Delete Customer', icon: Trash2, onClick: handleDelete, variant: 'danger' }
+    ];
 
     return (
         <OrganizationLayout>
@@ -48,10 +124,12 @@ const Index = ({
             <PageLayout
                 title="Customers"
                 actions={actionsRoot}
+                fullWidth={true}
             >
                 <ClientDataTable
                     columns={columns}
                     data={customers}
+                    actions={actions}
                 />
             </PageLayout>
         </OrganizationLayout>

@@ -14,6 +14,11 @@ class OrganizationCustomer extends Model
         'customer_id',
     ];
 
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
     public function organization(): BelongsTo
     {
         return $this->belongsTo(Organization::class);

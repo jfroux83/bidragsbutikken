@@ -6,7 +6,7 @@ use App\Http\Controllers\AdminVendorController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerDashboardController;
-use App\Http\Controllers\OrganizationCustomer;
+use App\Http\Controllers\OrganizationCustomerController;
 use App\Http\Controllers\OrganizationDashboardController;
 use App\Http\Controllers\PostalCodeController;
 use App\Http\Controllers\SystemJobController;
@@ -111,12 +111,12 @@ Route::prefix('organization')->name('organization.')->middleware(['auth', 'profi
 
     // Customers
     Route::prefix('customer')->name('customer.')->group(function () {
-        Route::get('/', [OrganizationCustomer::class, 'index'])->name('index');
-        Route::get('/create', [OrganizationCustomer::class, 'create'])->name('create');
-        Route::post('/', [OrganizationCustomer::class, 'store'])->name('store');
-        Route::get('/{customer}/edit', [OrganizationCustomer::class, 'edit'])->name('edit');
-        Route::put('/{customer}', [OrganizationCustomer::class, 'update'])->name('update');
-        Route::delete('/{customer}', [OrganizationCustomer::class, 'destroy'])->name('destroy');
+        Route::get('/', [OrganizationCustomerController::class, 'index'])->name('index');
+        Route::get('/create', [OrganizationCustomerController::class, 'create'])->name('create');
+        Route::post('/', [OrganizationCustomerController::class, 'store'])->name('store');
+        Route::get('/{customer}/edit', [OrganizationCustomerController::class, 'edit'])->name('edit');
+        Route::put('/{customer}', [OrganizationCustomerController::class, 'update'])->name('update');
+        Route::delete('/{customer}', [OrganizationCustomerController::class, 'destroy'])->name('destroy');
     });
 });
 
