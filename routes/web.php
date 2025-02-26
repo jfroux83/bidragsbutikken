@@ -20,8 +20,8 @@ Route::get('/', function () {
     }
 
     // Get user's profile and redirect accordingly
-    $user = auth()->user();
-    $profile = $user->profile;
+    $user = auth()->user()->load('profiles');
+    $profile = $user->profiles->first();
 
     return match ($profile->name) {
         'admin' => redirect()->route('admin.dashboard'),

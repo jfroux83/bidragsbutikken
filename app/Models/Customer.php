@@ -3,16 +3,36 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * @method static whereIn(string $string, $customerIds)
+ * @method static whereHas(string $string, \Closure $param)
+ */
 class Customer extends Model
 {
-    protected $table = 'customer';
-    protected $primaryKey = 'customer_id';
-    protected $fillable = [];
+    protected $table = 'customers';
 
-    public function Organization(): BelongsTo
+    protected $fillable = [
+        'status',
+        'first_name',
+        'last_name',
+        'street_1',
+        'street_2',
+        'city',
+        'postal_code',
+        'telephone',
+        'email',
+        'referred_by',
+    ];
+
+    public function organizations(): BelongsToMany
     {
-        return $this->belongsTo(Organization::class, 'organization_organization_id', 'organization_id');
+        return $this->belongsToMany(Organization::class, 'organization_customers', 'customer_id', 'organization_id');
+    }
+
+    public function vendors(): BelongsToMany
+    {
+        return $this->belongsToMany(Vendor::class, 'vendor_customers', 'customer_id', 'vendor_id');
     }
 }
