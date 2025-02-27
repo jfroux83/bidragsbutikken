@@ -143,7 +143,22 @@ class OrganizationCustomerController extends Controller
         }
     }
 
-    public function destroy() {}
+    public function destroy(Customer $customer): RedirectResponse
+    {
+        try {
+            $customer->delete();
+
+            return redirect()
+                ->route('organization.customer.index')
+                ->with('success', 'Successfully deleted customer.');
+
+        } catch (Exception $e) {
+            Log::channel('custom_errors')->error(OrganizationCustomerController::class . '::destroy(): ' . $e->getMessage());
+            return redirect()
+                ->back()
+                ->with('error', 'Failed to delete customer.');
+        }
+    }
 
     /**
      * Helper methods

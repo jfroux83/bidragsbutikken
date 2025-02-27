@@ -1,11 +1,11 @@
+import React, {useState} from "react";
 import {Head, router} from "@inertiajs/react";
-import OrganizationLayout from "@/Layouts/OrganizationLayout";
+import VendorLayout from "@/Layouts/VendorLayout";
 import PageLayout from "@/Components/UI/PageLayout";
 import {ClientDataTable} from "@/Components/DataTable/ClientDataTable";
+import ConfirmationDialog from "@/Components/UI/ConfirmationDialog";
 import {Action, BaseColumn} from "@/Components/DataTable/DataTable";
 import {Pencil, Plus, Trash2} from "lucide-react";
-import React, {useState} from "react";
-import ConfirmationDialog from "@/Components/UI/ConfirmationDialog";
 
 interface Customer {
     id: number;
@@ -104,11 +104,11 @@ const Index = ({
     ];
 
     const handleCreate = () => {
-        router.get('/organization/customer/create');
+        router.get('/vendor/customer/create');
     };
 
     const handleEdit = (customer: Customer) => {
-        router.get(`/organization/customer/${customer.id}/edit`);
+        router.get(`/vendor/customer/${customer.id}/edit`);
     };
 
     const handleDelete = (customer: Customer) => {
@@ -118,7 +118,7 @@ const Index = ({
 
     const confirmDelete = () => {
         if (recordToDelete) {
-            router.delete(`/organization/customer/${recordToDelete.id}`);
+            router.delete(`/vendor/customer/${recordToDelete.id}`);
         }
     };
 
@@ -132,7 +132,7 @@ const Index = ({
     ];
 
     return (
-        <OrganizationLayout>
+        <VendorLayout>
             <Head title="Customers" />
             <PageLayout
                 title="Customers"
@@ -158,7 +158,7 @@ const Index = ({
                     type='danger'
                 />
             </PageLayout>
-        </OrganizationLayout>
+        </VendorLayout>
     );
 };
 

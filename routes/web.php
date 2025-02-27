@@ -10,7 +10,7 @@ use App\Http\Controllers\OrganizationCustomerController;
 use App\Http\Controllers\OrganizationDashboardController;
 use App\Http\Controllers\PostalCodeController;
 use App\Http\Controllers\SystemJobController;
-use App\Http\Controllers\VendorCustomer;
+use App\Http\Controllers\VendorCustomerController;
 use App\Http\Controllers\VendorDashboardController;
 use Illuminate\Support\Facades\Route;
 
@@ -126,12 +126,12 @@ Route::prefix('vendor')->name('vendor.')->middleware(['auth', 'profile:vendor'])
 
     // Customers
     Route::prefix('customer')->name('customer.')->group(function () {
-        Route::get('/', [VendorCustomer::class, 'index'])->name('index');
-        Route::get('/create', [VendorCustomer::class, 'create'])->name('create');
-        Route::post('/', [VendorCustomer::class, 'store'])->name('store');
-        Route::get('/{customer}/edit', [VendorCustomer::class, 'edit'])->name('edit');
-        Route::put('/{customer}', [VendorCustomer::class, 'update'])->name('update');
-        Route::delete('/{customer}', [VendorCustomer::class, 'destroy'])->name('destroy');
+        Route::get('/', [VendorCustomerController::class, 'index'])->name('index');
+        Route::get('/create', [VendorCustomerController::class, 'create'])->name('create');
+        Route::post('/', [VendorCustomerController::class, 'store'])->name('store');
+        Route::get('/{customer}/edit', [VendorCustomerController::class, 'edit'])->name('edit');
+        Route::put('/{customer}', [VendorCustomerController::class, 'update'])->name('update');
+        Route::delete('/{customer}', [VendorCustomerController::class, 'destroy'])->name('destroy');
     });
 });
 
