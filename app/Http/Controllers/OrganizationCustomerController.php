@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use App\Models\PostalCode;
+use App\Services\UserRegistrationService;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
@@ -12,6 +13,13 @@ use Inertia\ResponseFactory;
 
 class OrganizationCustomerController extends Controller
 {
+    protected UserRegistrationService $userRegistrationService;
+
+    public function __construct(UserRegistrationService $userRegistrationService)
+    {
+        $this->userRegistrationService = $userRegistrationService;
+    }
+
     public function index(): Response|ResponseFactory
     {
         $organizationId = session('organization_id');
@@ -67,6 +75,14 @@ class OrganizationCustomerController extends Controller
             ]);
 
             $customer->organizations()->attach(session('organization_id'));
+
+            $registration = $this->userRegistrationService->userRegistration('customer', $customer->id, $validate['email']);
+
+            if (!$registration) {
+                return redirect()
+                    ->route('organization.customer.index')
+                    ->with('error', 'Customer was successfully created but the user registration failed. Please investigate the logs');
+            }
 
             return redirect()
                 ->route('organization.customer.index')

@@ -7,6 +7,7 @@ use App\Models\PostalCode;
 use App\Traits\ManagesSystemJobs;
 use Exception;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Inertia\Response;
 use Inertia\ResponseFactory;
@@ -187,6 +188,23 @@ class PostalCodeController extends Controller
 
         } catch (Exception $e) {
             Log::channel('custom_errors')->error(PostalCodeController::class . '::uploadProcess(): ' . $e->getMessage());
+            return redirect()
+                ->back()
+                ->with('error', 'Something went wrong. Please try again.');
+        }
+    }
+
+    public function wipe(): RedirectResponse
+    {
+        try {
+            DB::table('postal_codes')->delete();
+
+            return redirect()
+                ->route('admin.configuration.postal-code.index')
+                ->with('success', 'Postal Codes wiped successfully.');
+
+        } catch (Exception $e) {
+            Log::channel('custom_errors')->error(PostalCodeController::class . '::wipe(): ' . $e->getMessage());
             return redirect()
                 ->back()
                 ->with('error', 'Something went wrong. Please try again.');

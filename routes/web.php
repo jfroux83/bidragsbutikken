@@ -72,6 +72,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'profile:admin'])->g
              Route::get('/download-template', [PostalCodeController::class, 'downloadTemplate'])->name('downloadTemplate');
              Route::get('/upload', [PostalCodeController::class, 'upload'])->name('upload');
              Route::post('/upload', [PostalCodeController::class, 'uploadProcess'])->name('upload-process');
+             Route::delete('/wipe', [PostalCodeController::class, 'wipe'])->name('wipe');
          });
      });
 
