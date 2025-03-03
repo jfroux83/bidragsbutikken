@@ -16,7 +16,7 @@ class UserSeeder extends Seeder
         User::create([
             'name' => 'Administrator',
             'email' => 'admin@bidragsbutikken.no',
-            'password' => 'admin',
+            'password' => 'G%53ymfy6w2j',
             'created_at' => now(),
             'updated_at' => now(),
         ]);

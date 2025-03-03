@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @method static orderBy(string $string)
@@ -37,4 +38,8 @@ class Organization extends Model
     ];
 
     // relationships
+    public function vendors(): HasMany
+    {
+        return $this->hasMany(OrganizationVendor::class, 'organization_id', 'id');
+    }
 }

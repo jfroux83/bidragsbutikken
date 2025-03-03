@@ -29,9 +29,12 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        $user = Auth::user();
+        $user = Auth::user()->load('profiles');
 
-        if (!$user->profile) {
+        // Check if user has at least one profile
+        $profile = $user->profiles->first();
+
+        if (!$profile) {
             Auth::logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
@@ -41,10 +44,30 @@ class AuthController extends Controller
                 ->with('error', 'No profile assigned. Please contact administrator.');
         }
 
+        session(['profile_id' => $profile->id]);
+
+        switch ($profile->name) {
+            case 'organization':
+                if ($user->organization) {
+                    session(['organization_id' => $user->organization->first()->id]);
+                }
+                break;
+            case 'vendor':
+                if ($user->vendor) {
+                    session(['vendor_id' => $user->vendor->first()->id]);
+                }
+                break;
+            case 'customer':
+                if ($user->customer) {
+                    session(['customer_id' => $user->customer->first()->id]);
+                }
+                break;
+        }
+
         // Update last login timestamp
         // $user->update(['last_login_at' => now()]);
 
-        $profileRoute = $user->profile->first()?->name;
+        $profileRoute = $profile->name;
 
         // Redirect based on profile type
         return redirect()

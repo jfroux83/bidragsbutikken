@@ -5,6 +5,7 @@ import PageLayout from "@/Components/UI/PageLayout";
 import Edit from "@/Pages/Admin/Organization/Edit";
 import {CornerDownLeft, Plus} from "lucide-react";
 import Users from "@/Pages/Admin/Organization/Users";
+import Vendors from "@/Pages/Admin/Organization/Vendors";
 
 type Tab = 'edit' | 'payment_methods' | 'vendors' | 'users';
 
@@ -122,7 +123,11 @@ const Container = ({
                         {activeTab === 'vendors' && (
                             <div>
                                 <h2 className="text-2xl font-medium mb-6">Vendors</h2>
-
+                                <Vendors organization={{
+                                        id: organization.id,
+                                        name: organization.name,
+                                    }}
+                                />
                             </div>
                         )}
                         {activeTab === 'users' && (

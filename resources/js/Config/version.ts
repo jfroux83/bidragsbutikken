@@ -23,6 +23,21 @@ export const versions: Version[] = [
             'Feature: Postal Codes'
         ]
     },
+    {
+        major: 1,
+        minor: 1,
+        patch: 0,
+        releaseDate: '2025-03-03',
+        notes: [
+            'Feature: Admin -> Audit Logs',
+            'Feature: Admin -> Vendors & Vendor user registration',
+            'Feature: Admin -> Organization vendors',
+            'Feature: Organization -> Customer registration',
+            'Feature: Vendor -> Customer registration',
+            'Change: Admin -> Postal codes',
+            'Change: Admin -> Authentication logic'
+        ]
+    }
 ];
 
 // Helper functions

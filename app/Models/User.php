@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -69,11 +69,20 @@ class User extends Authenticatable
         ];
     }
 
-    public function profile(): BelongsToMany
+    public function profiles(): BelongsToMany
     {
         return $this->belongsToMany(Profile::class, 'user_profiles', 'user_id', 'profile_id');
     }
 
+    public function organization(): BelongsToMany
+    {
+        return $this->belongsToMany(Organization::class, 'organization_users', 'user_id', 'organization_id');
+    }
+
+    public function vendor(): BelongsToMany
+    {
+        return $this->belongsToMany(Vendor::class, 'vendor_users', 'user_id', 'vendor_id');
+    }
 
     /*
      * Methods
