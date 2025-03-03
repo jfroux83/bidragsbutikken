@@ -3,10 +3,12 @@
 namespace App\Services;
 
 use App\Jobs\UserRegistrationJob;
+use App\Models\CustomerUser;
 use App\Models\OrganizationUser;
 use App\Models\Profile;
 use App\Models\User;
 use App\Models\UserProfile;
+use App\Models\VendorUser;
 use DateTime;
 use Illuminate\Support\Str;
 
@@ -26,7 +28,7 @@ class UserRegistrationService
         $token = $this->generateToken();
 
         $user = User::create([
-            'name' => Str::ucfirst($type) . ' default user',
+            'name' => Str::ucfirst($type) . ' ' . $registerId,
             'email' => $email,
             'password' => $tempPassword,
             'locale' => 'en',
@@ -42,10 +44,26 @@ class UserRegistrationService
             'profile_id' => $profileId,
         ]);
 
-        OrganizationUser::create([
-            'organization_id' => $registerId,
-            'user_id' => $user->id,
-        ]);
+        switch ($type) {
+            case 'organization':
+                OrganizationUser::create([
+                    'organization_id' => $registerId,
+                    'user_id' => $user->id,
+                ]);
+                break;
+            case 'vendor':
+                VendorUser::create([
+                    'vendor_id' => $registerId,
+                    'user_id' => $user->id,
+                ]);
+                break;
+            case 'customer':
+                CustomerUser::create([
+                    'customer_id' => $registerId,
+                    'user_id' => $user->id,
+                ]);
+                break;
+        }
 
         dispatch(new UserRegistrationJob($user, $tempPassword, $token));
 

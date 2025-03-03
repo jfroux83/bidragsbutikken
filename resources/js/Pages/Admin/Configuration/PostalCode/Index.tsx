@@ -3,7 +3,7 @@ import {Head, router} from "@inertiajs/react";
 import AdminLayout from "@/Layouts/AdminLayout";
 import PageLayout from "@/Components/UI/PageLayout";
 import {ClientDataTable} from "@/Components/DataTable/ClientDataTable";
-import {FileDown, Pencil, Plus, Trash2, Upload} from "lucide-react";
+import {FileDown, Paintbrush, Pencil, Plus, Trash2, Upload} from "lucide-react";
 import {Action} from "@/Components/DataTable/DataTable";
 import ConfirmationDialog from "@/Components/UI/ConfirmationDialog";
 
@@ -26,6 +26,7 @@ const Index = ({
 
     const [deleteConfirm, setDeleteConfirm] = useState(false);
     const [recordToDelete, setRecordToDelete] = useState<PostalCode | null>(null);
+    const [wipeConfirm, setWipeConfirm] = useState(false);
 
     const columns = [
         {
@@ -112,10 +113,19 @@ const Index = ({
           router.get('/admin/configuration/postal-code/upload');
     };
 
+    const handleWipe = () => {
+        setWipeConfirm(true);
+    };
+
+    const confirmWipe = () => {
+        router.delete('/admin/configuration/postal-code/wipe');
+    };
+
     const actionsRoot = [
         { label: 'Create New Record', icon: Plus, onClick: handleCreate, size: 'sm' },
         { label: 'Import Postal Codes', icon: Upload, onClick: handleUpload, variant: 'secondary', size: 'sm' },
-        { label: 'Template: Postal Codes', icon: FileDown, onClick: handleDownloadTemplate, variant: 'secondary', size: 'sm' }
+        { label: 'Template: Postal Codes', icon: FileDown, onClick: handleDownloadTemplate, variant: 'secondary', size: 'sm' },
+        { label: 'Wipe Postal Codes', icon: Paintbrush, onClick: handleWipe, variant: 'danger', size: 'sm' }
     ];
 
     const actions: Action<PostalCode>[] = [
@@ -148,6 +158,18 @@ const Index = ({
                     onConfirm={confirmDelete}
                     title='Delete Postal Code'
                     message={`Are you sure you want to delete postal code ${recordToDelete?.postalCode}? This action cannot be undone.`}
+                    confirmText='Delete'
+                    type='danger'
+                />
+
+                <ConfirmationDialog
+                    isOpen={wipeConfirm}
+                    onClose={() => {
+                        setWipeConfirm(false);
+                    }}
+                    onConfirm={confirmWipe}
+                    title='Wipe Postal Codes'
+                    message={`Are you sure you want to wipe postal codes? This action cannot be undone.`}
                     confirmText='Delete'
                     type='danger'
                 />

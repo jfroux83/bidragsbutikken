@@ -18,10 +18,13 @@ class CheckUserProfile
             return redirect()->route('login');
         }
 
-        $user = Auth::user();
+        $user = Auth::user()->load('profiles');
+
+        // Check if user has at least one profile
+        $profile = $user->profiles->first();
 
         // Check if user has a profile
-        if (!$user->profile) {
+        if (!$profile) {
             Auth::logout();
 
             return redirect()
@@ -30,15 +33,15 @@ class CheckUserProfile
         }
 
         // Check if profile matches required type
-        if ($user->profile->first()->name !== $profileType) {
+        if ($profile->name !== $profileType) {
             return redirect()
-                ->route($user->profile->first()->name . '.dashboard')
+                ->route($profile->name . '.dashboard')
                 ->with('error', 'Unauthorized access attempt.');
         }
 
         // Add profile information to every response
         if (!$request->is('logout')) {
-            $request->attributes->add(['current_profile' => $user->profile->first()->name]);
+            $request->attributes->add(['current_profile' => $profile->name]);
         }
 
         return $next($request);

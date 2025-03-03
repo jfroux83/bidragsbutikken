@@ -1,37 +1,42 @@
 import {useState} from "react";
 import {Head, router} from "@inertiajs/react";
-import AdminLayout from "@/Layouts/AdminLayout";
+import {CornerDownLeft} from "lucide-react";
 import PageLayout from "@/Components/UI/PageLayout";
-import Edit from "@/Pages/Admin/Organization/Edit";
-import {CornerDownLeft, Plus} from "lucide-react";
-import Users from "@/Pages/Admin/Organization/Users";
-import Vendors from "@/Pages/Admin/Organization/Vendors";
+import Edit from "@/Pages/Admin/Vendor/Edit";
+import Users from "@/Pages/Admin/Vendor/Users";
+import AdminLayout from "@/Layouts/AdminLayout";
 
-type Tab = 'edit' | 'payment_methods' | 'vendors' | 'users';
+type Tab = 'edit' | 'payment_methods' | 'users';
 
 interface Props {
-    organization: {
+    vendor: {
         id: number;
         status: boolean;
         name: string;
-        registrationNumber: string;
         address1: string;
         address2: string;
         city: string;
         postalCode: string;
         telephone: string;
         email: string;
-        logo: string;
+        receiveOrdersEmail: boolean;
+        freeShippingAmount: number;
+        adminFee: number;
+        paymentFee: number;
+        systemFee: number;
+        contributionFee: number;
+        bonusFee: number;
+        maxDeliveryDistance: number;
     };
     postalCodes: Array<{
         label: string;
         value: string;
-    }>;
+    }>
 }
 
 const Container = ({
-    organization,
-    postalCodes,
+    vendor,
+    postalCodes
 }: Props) => {
 
     const [activeTab, setActiveTab] = useState<Tab>('edit');
@@ -41,7 +46,7 @@ const Container = ({
     };
 
     const handleReturn = () => {
-        router.get('/admin/organization');
+        router.get('/admin/vendor');
     }
 
     const actionsRoot = [
@@ -50,10 +55,10 @@ const Container = ({
 
     return (
         <AdminLayout>
-            <Head title="Admin | Organization" />
+            <Head title="Admin | Vendors" />
             <PageLayout
-                title="Organization | Edit"
-                containerClassName="bg-white shadow rounded-md mt-2"
+                title="Vendor | Edit"
+                // containerClassName="bg-white shadow rounded-md mt-2"
                 // @ts-ignore
                 actions={actionsRoot}
                 fullWidth={true}
@@ -83,16 +88,6 @@ const Container = ({
                             </button>
                             <button
                                 className={`text-left px-4 py-3 rounded-lg mb-2 ${
-                                    activeTab === 'vendors'
-                                        ? 'bg-green-50 text-green-600 font-medium'
-                                        : 'text-gray-600 hover:bg-gray-100'
-                                }`}
-                                onClick={() => handleTabChange('vendors')}
-                            >
-                                Vendors
-                            </button>
-                            <button
-                                className={`text-left px-4 py-3 rounded-lg mb-2 ${
                                     activeTab === 'users'
                                         ? 'bg-green-50 text-green-600 font-medium'
                                         : 'text-gray-600 hover:bg-gray-100'
@@ -109,7 +104,7 @@ const Container = ({
                             <div>
                                 <h2 className="text-2xl font-medium mb-6">Edit</h2>
                                 <Edit
-                                    organization={organization}
+                                    vendor={vendor}
                                     postalCodes={postalCodes}
                                 />
                             </div>
@@ -120,20 +115,10 @@ const Container = ({
 
                             </div>
                         )}
-                        {activeTab === 'vendors' && (
-                            <div>
-                                <h2 className="text-2xl font-medium mb-6">Vendors</h2>
-                                <Vendors organization={{
-                                        id: organization.id,
-                                        name: organization.name,
-                                    }}
-                                />
-                            </div>
-                        )}
                         {activeTab === 'users' && (
                             <div>
                                 <h2 className="text-2xl font-medium mb-6">Users</h2>
-                                <Users organizationId={organization.id} />
+                                <Users vendorId={vendor.id} />
                             </div>
                         )}
                     </div>

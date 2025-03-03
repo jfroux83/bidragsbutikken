@@ -2,26 +2,24 @@ import {useState} from "react";
 import {Head, router} from "@inertiajs/react";
 import AdminLayout from "@/Layouts/AdminLayout";
 import PageLayout from "@/Components/UI/PageLayout";
-import Edit from "@/Pages/Admin/Organization/Edit";
 import {CornerDownLeft, Plus} from "lucide-react";
-import Users from "@/Pages/Admin/Organization/Users";
-import Vendors from "@/Pages/Admin/Organization/Vendors";
+import Edit from "@/Pages/Organization/Customer/Edit";
 
-type Tab = 'edit' | 'payment_methods' | 'vendors' | 'users';
+type Tab = 'edit' | 'payment_methods' | 'shipping_addresses' | 'orders';
 
 interface Props {
-    organization: {
+    customer: {
         id: number;
         status: boolean;
-        name: string;
-        registrationNumber: string;
-        address1: string;
-        address2: string;
+        firstName: string;
+        lastName: string;
+        street1: string;
+        street2: string;
         city: string;
         postalCode: string;
         telephone: string;
         email: string;
-        logo: string;
+        referredBy: string;
     };
     postalCodes: Array<{
         label: string;
@@ -30,7 +28,7 @@ interface Props {
 }
 
 const Container = ({
-    organization,
+    customer,
     postalCodes,
 }: Props) => {
 
@@ -41,7 +39,7 @@ const Container = ({
     };
 
     const handleReturn = () => {
-        router.get('/admin/organization');
+        router.get('/organization/customer');
     }
 
     const actionsRoot = [
@@ -50,10 +48,9 @@ const Container = ({
 
     return (
         <AdminLayout>
-            <Head title="Admin | Organization" />
+            <Head title="Customer | Edit" />
             <PageLayout
-                title="Organization | Edit"
-                containerClassName="bg-white shadow rounded-md mt-2"
+                title={`${customer.lastName}, ${customer.firstName} | Edit`}
                 // @ts-ignore
                 actions={actionsRoot}
                 fullWidth={true}
@@ -83,23 +80,23 @@ const Container = ({
                             </button>
                             <button
                                 className={`text-left px-4 py-3 rounded-lg mb-2 ${
-                                    activeTab === 'vendors'
+                                    activeTab === 'shipping_addresses'
                                         ? 'bg-green-50 text-green-600 font-medium'
                                         : 'text-gray-600 hover:bg-gray-100'
                                 }`}
-                                onClick={() => handleTabChange('vendors')}
+                                onClick={() => handleTabChange('shipping_addresses')}
                             >
-                                Vendors
+                                Shipping Addresses
                             </button>
                             <button
                                 className={`text-left px-4 py-3 rounded-lg mb-2 ${
-                                    activeTab === 'users'
+                                    activeTab === 'orders'
                                         ? 'bg-green-50 text-green-600 font-medium'
                                         : 'text-gray-600 hover:bg-gray-100'
                                 }`}
-                                onClick={() => handleTabChange('users')}
+                                onClick={() => handleTabChange('orders')}
                             >
-                                Users
+                                Orders
                             </button>
                         </nav>
                     </div>
@@ -109,7 +106,7 @@ const Container = ({
                             <div>
                                 <h2 className="text-2xl font-medium mb-6">Edit</h2>
                                 <Edit
-                                    organization={organization}
+                                    customer={customer}
                                     postalCodes={postalCodes}
                                 />
                             </div>
@@ -120,20 +117,14 @@ const Container = ({
 
                             </div>
                         )}
-                        {activeTab === 'vendors' && (
+                        {activeTab === 'shipping_addresses' && (
                             <div>
-                                <h2 className="text-2xl font-medium mb-6">Vendors</h2>
-                                <Vendors organization={{
-                                        id: organization.id,
-                                        name: organization.name,
-                                    }}
-                                />
+                                <h2 className="text-2xl font-medium mb-6">Shipping Addresses</h2>
                             </div>
                         )}
-                        {activeTab === 'users' && (
+                        {activeTab === 'orders' && (
                             <div>
-                                <h2 className="text-2xl font-medium mb-6">Users</h2>
-                                <Users organizationId={organization.id} />
+                                <h2 className="text-2xl font-medium mb-6">Orders</h2>
                             </div>
                         )}
                     </div>

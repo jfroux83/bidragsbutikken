@@ -1,10 +1,10 @@
-import {ReactNode} from "react";
+import React, {ReactNode} from "react";
 import {LucideIcon} from "lucide-react";
 
 interface ActionButton {
     label: string;
     icon?: LucideIcon;
-    onClick: () => void;
+    onClick: (e: React.FormEvent) => void;
     variant?: 'primary' | 'secondary' | 'danger' | 'warning';
     size?: 'sm' | 'md' | 'lg';
     isLoading?: boolean;

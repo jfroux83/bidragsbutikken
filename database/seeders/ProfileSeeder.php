@@ -14,7 +14,7 @@ class ProfileSeeder extends Seeder
     public function run(): void
     {
         Profile::create([
-            'name' => 'system_admin',
+            'name' => 'admin',
             'display_name' => 'System Administrator',
             'description' => 'Has full access to system settings and user management',
         ]);
@@ -26,9 +26,9 @@ class ProfileSeeder extends Seeder
         ]);
 
         Profile::create([
-            'name' => 'seller',
-            'display_name' => 'Seller',
-            'description' => 'Can manage customers within their seller community',
+            'name' => 'vendor',
+            'display_name' => 'Vendor',
+            'description' => 'Can manage customers within their vendor community',
         ]);
 
         Profile::create([
