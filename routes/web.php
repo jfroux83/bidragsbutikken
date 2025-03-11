@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AdminOrganizationController;
+use App\Http\Controllers\AdminProductCategoryController;
+use App\Http\Controllers\AdminProductTagController;
 use App\Http\Controllers\AdminVendorController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\AuthController;
@@ -15,7 +17,6 @@ use App\Http\Controllers\ProductTagController;
 use App\Http\Controllers\SystemJobController;
 use App\Http\Controllers\VendorCustomerController;
 use App\Http\Controllers\VendorDashboardController;
-use App\Models\ProductCategory;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -107,6 +108,19 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'profile:admin'])->g
          Route::get('/users/{vendor}', [AdminVendorController::class, 'users'])->name('users');
          Route::post('/users', [AdminVendorController::class, 'destroyUser'])->name('destroy-user');
          Route::post('/users/password-reset', [AdminVendorController::class, 'passwordReset'])->name('password-reset');
+     });
+
+     // Product Management
+     Route::prefix('product')->name('product.')->group(function () {
+        // Categories
+        Route::prefix('category')->name('category.')->group(function () {
+            Route::get('/', [AdminProductCategoryController::class, 'index'])->name('index');
+        });
+
+        // Tags
+        Route::prefix('tag')->name('tag.')->group(function () {
+            Route::get('/', [AdminProductTagController::class, 'index'])->name('index');
+        });
      });
 });
 

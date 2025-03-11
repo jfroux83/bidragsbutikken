@@ -1,6 +1,9 @@
+// TODO: implement edit
+// TODO: implement delete
+
 import React, {useState} from "react";
 import {Head, router} from "@inertiajs/react";
-import MainLayout from "@/Layouts/MainLayout";
+import VendorLayout from "@/Layouts/VendorLayout";
 import PageLayout from "@/Components/UI/PageLayout";
 import {ClientDataTable} from "@/Components/DataTable/ClientDataTable";
 import {Action, BaseColumn} from "@/Components/DataTable/DataTable";
@@ -52,7 +55,7 @@ const Index = ({
     ];
 
     return (
-        <MainLayout>
+        <VendorLayout>
             <Head title="Product Categories" />
             <PageLayout
                 title="Product Categories"
@@ -64,7 +67,7 @@ const Index = ({
                     actions={actions}
                 />
             </PageLayout>
-        </MainLayout>
+        </VendorLayout>
     );
 };
 

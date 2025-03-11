@@ -2,9 +2,9 @@ import React from "react";
 import {Head, router, useForm} from "@inertiajs/react";
 import VendorLayout from "@/Layouts/VendorLayout";
 import PageLayout from "@/Components/UI/PageLayout";
+import {CornerDownLeft} from "lucide-react";
 import Form from "@/Components/Forms/Form";
 import TextField from "@/Components/Forms/TextField";
-import {CornerDownLeft} from "lucide-react";
 import ButtonRow from "@/Components/Forms/ButtonRow";
 import Submit from "@/Components/Forms/Submit";
 
@@ -15,30 +15,27 @@ const Create = () => {
     });
 
     const handleReturn = () => {
-        router.get('/vendor/product/category');
+        router.get('/vendor/product/tag');
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post('/vendor/product/category');
-    };
+        post('/vendor/product/tag');
+    }
 
     const actionsRoot = [
-        { icon: CornerDownLeft, label: "Return to Product Categories", onClick: handleReturn, variant: 'secondary' },
+        { icon: CornerDownLeft, label: 'Return to Product Tags', onClick: handleReturn, variant: 'secondary' }
     ];
 
     return (
         <VendorLayout>
-            <Head title="Product Categories" />
+            <Head title="Product Tag | Create" />
             <PageLayout
-                title="Product Category | Create"
+                title="Product Tag | Create"
                 // @ts-ignore
                 actions={actionsRoot}
             >
-                <Form
-                    onSubmit={handleSubmit}
-                    classNames="w-[600px] mx-auto"
-                >
+                <Form onSubmit={handleSubmit} classNames="w-[600px] mx-auto">
                     <TextField
                         name="name"
                         label="Name"
