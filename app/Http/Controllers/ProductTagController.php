@@ -58,9 +58,55 @@ class ProductTagController extends Controller
         }
     }
 
-    public function edit(ProductTag $tag) {}
+    public function edit(ProductTag $tag): Response|ResponseFactory
+    {
+        return inertia('Vendor/Configuration/ProductTag/Edit', [
+            'tag' => [
+                'id' => $tag->id,
+                'name' => $tag->name
+            ]
+        ]);
+    }
 
-    public function update(ProductTag $tag) {}
+    public function update(ProductTag $tag): RedirectResponse
+    {
+        $validate = request()->validate([
+            'name' => ['required'],
+        ]);
 
-    public function destroy(ProductTag $tag) {}
+        try {
+            $tag->update([
+                'name' => $validate['name'],
+                'updated_at' => now(),
+            ]);
+
+            return redirect()
+                ->route('vendor.product.tag.index')
+                ->with('success', 'Product tag updated successfully.');
+
+        } catch (Exception $e) {
+            Log::channel('custom_errors')->error(ProductTagController::class . '::update(): ' . $e->getMessage());
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Something went wrong. Please try again.');
+        }
+    }
+
+    public function destroy(ProductTag $tag): RedirectResponse
+    {
+        try {
+            $tag->delete();
+
+            return redirect()
+                ->route('vendor.product.tag.index')
+                ->with('success', 'Product tag deleted successfully.');
+
+        } catch (Exception $e) {
+            Log::channel('custom_errors')->error(ProductTagController::class . '::destroy(): ' . $e->getMessage());
+            return redirect()
+                ->back()
+                ->with('error', 'Something went wrong. Please try again later.');
+        }
+    }
 }

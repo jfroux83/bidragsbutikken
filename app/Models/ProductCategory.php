@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 /**
  * @method static where(string $string, mixed $session)
  * @method static create(array $array)
+ * @property mixed $id
+ * @property mixed $name
  */
 class ProductCategory extends Model
 {

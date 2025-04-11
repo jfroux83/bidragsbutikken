@@ -1,9 +1,9 @@
 import {useState} from "react";
 import {Head, router} from "@inertiajs/react";
-import AdminLayout from "@/Layouts/AdminLayout";
+import VendorLayout from "@/Layouts/VendorLayout";
 import PageLayout from "@/Components/UI/PageLayout";
-import {CornerDownLeft} from "lucide-react";
 import Edit from "@/Pages/Vendor/Customer/Edit";
+import {CornerDownLeft} from "lucide-react";
 
 type Tab = 'edit' | 'payment_methods' | 'shipping_addresses' | 'orders';
 
@@ -47,7 +47,7 @@ const Container = ({
     ];
 
     return (
-        <AdminLayout>
+        <VendorLayout>
             <Head title="Customer | Edit" />
             <PageLayout
                 title={`${customer.lastName}, ${customer.firstName} | Edit`}
@@ -130,7 +130,7 @@ const Container = ({
                     </div>
                 </div>
             </PageLayout>
-        </AdminLayout>
+        </VendorLayout>
     );
 };
 
