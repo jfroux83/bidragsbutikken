@@ -70,12 +70,12 @@ const MultiSelectPillInput = ({
     return (
         <div className={`mb-4 ${className}`}>
             {/* Label */}
-            <label htmlFor={componentId} className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label htmlFor={componentId} className="block text-sm font-medium text-gray-700">
                 {label}
             </label>
 
             {/* Selected Items Pills */}
-            <div className="mb-2 flex flex-wrap gap-2 min-h-[30px]">
+            <div className="my-2 flex flex-wrap gap-2 min-h-[30px]">
                 {selectedItemObjects.length === 0 && !disabled && (
                     <span className="text-xs text-gray-500 italic">No {label.toLowerCase()} selected.</span>
                 )}
@@ -85,7 +85,7 @@ const MultiSelectPillInput = ({
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium ${
                             disabled
                                 ? 'bg-gray-200 text-gray-500'
-                                : 'bg-blue-100 text-blue-800 dark:bg-blue-700 dark:text-blue-100'
+                                : 'bg-blue-100 text-green-800 dark:bg-green-700 dark:text-green-100'
                         }`}
                     >
                         {item.label}
@@ -93,7 +93,7 @@ const MultiSelectPillInput = ({
                             <button
                                 type="button" // Prevent form submission
                                 onClick={() => handleRemoveItem(item.value)}
-                                className="ml-1.5 flex-shrink-0 inline-flex items-center justify-center h-4 w-4 rounded-full text-blue-400 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-600 hover:text-blue-500 dark:hover:text-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                className="ml-1.5 flex-shrink-0 inline-flex items-center justify-center h-4 w-4 rounded-full text-green-400 dark:text-green-200 hover:bg-green-200 dark:hover:bg-green-600 hover:text-green-500 dark:hover:text-green-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                                 aria-label={`Remove ${item.label}`}
                             >
                                 <svg className="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8">
@@ -113,7 +113,7 @@ const MultiSelectPillInput = ({
                     onChange={(e) => setCurrentItemId(e.target.value)}
                     onKeyPress={handleSelectKeyPress}
                     disabled={disabled || filteredAvailableItems.length === 0}
-                    className={`flex-grow block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-900 dark:text-gray-200 ${disabled || filteredAvailableItems.length === 0 ? 'bg-gray-100 dark:bg-gray-800 cursor-not-allowed' : ''}`}
+                    className={`flex-grow block w-full px-3 py-2 border border-gray-200 bg-white rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm text-gray-900 ${disabled || filteredAvailableItems.length === 0 ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                 >
                     <option value="" disabled>{filteredAvailableItems.length === 0 ? `All ${label.toLowerCase()} selected` : placeholder}</option>
                     {filteredAvailableItems.map((item) => (
@@ -126,7 +126,7 @@ const MultiSelectPillInput = ({
                     type="button" // Important: Prevent default form submission
                     onClick={handleAddItem}
                     disabled={!currentItemId || disabled}
-                    className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed dark:focus:ring-offset-gray-800`}
+                    className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:opacity-50 disabled:cursor-not-allowed dark:focus:ring-offset-gray-800`}
                 >
                     Add
                 </button>

@@ -29,7 +29,13 @@ const Index = ({
     const columns: BaseColumn<Product>[] = [
         {
             key: 'name',
-            title: 'Name'
+            title: 'Name',
+            filterable: true,
+            filterConfig: {
+                type: 'text',
+                placeholder: 'search...'
+            },
+            sortable: true,
         },
         {
             key: 'status',
@@ -66,7 +72,9 @@ const Index = ({
         router.get('/vendor/product/create');
     };
 
-    const handleEdit = (product: Product) => {};
+    const handleEdit = (product: Product) => {
+        router.get(`/vendor/product/${product.id}/edit`);
+    };
 
     const handleDelete = (product: Product) => {};
 

@@ -9,6 +9,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @method static where(string $string, mixed $session)
+ * @method static create(array $array)
+ * @property mixed $id
+ * @property mixed $name
+ * @property mixed $description
+ * @property mixed $status
+ * @property mixed $base_price
+ * @property mixed $is_subscribable
+ * @property mixed $categories
+ * @property mixed $tags
  */
 class Product extends Model
 {

@@ -12,6 +12,17 @@ import NumberField from "@/Components/Forms/NumberField";
 import MultiSelectPillInput from "@/Components/Forms/MultiSelectPillInput";
 import {CornerDownLeft} from "lucide-react";
 
+interface Product {
+    id: number;
+    name: string;
+    description: string;
+    status: boolean;
+    base_price: number;
+    is_subscribable: boolean;
+    category_ids: number[];
+    tag_ids: number[];
+}
+
 interface Category {
     value: number;
     label: string;
@@ -23,23 +34,25 @@ interface Tag {
 }
 
 interface Props {
+    product: Product;
     categories: Category[];
     tags: Tag[]
 }
 
-const Create = ({
+const Edit = ({
+    product,
     categories,
     tags
 }: Props) => {
 
-    const { data, setData, post, processing, errors } = useForm({
-        name: '',
-        description: '',
-        status: true,
-        base_price: 0,
-        is_subscribable: false,
-        category_ids: [],
-        tag_ids: []
+    const { data, setData, put, processing, errors } = useForm({
+        name: product.name,
+        description: product.description,
+        status: product.status,
+        base_price: product.base_price,
+        is_subscribable: product.is_subscribable,
+        category_ids: product.category_ids,
+        tag_ids: product.tag_ids,
     });
 
     const handleReturn = () => {
@@ -48,7 +61,7 @@ const Create = ({
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post('/vendor/product');
+        put(`/vendor/product/${product.id}`);
     };
 
     const handleCategoryChange = (selectedIds: (number | string)[]) => {
@@ -65,9 +78,9 @@ const Create = ({
 
     return (
         <VendorLayout>
-            <Head title="Product | Create" />
+            <Head title="Product | Edit" />
             <PageLayout
-                title="Product | Create"
+                title="Product | Edit"
                 // @ts-ignore
                 actions={actionsRoot}
             >
@@ -162,4 +175,4 @@ const Create = ({
     );
 };
 
-export default Create;
+export default Edit;
