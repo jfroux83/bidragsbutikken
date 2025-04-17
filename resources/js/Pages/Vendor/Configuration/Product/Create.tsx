@@ -11,6 +11,8 @@ import Radio from "@/Components/Forms/Radio";
 import NumberField from "@/Components/Forms/NumberField";
 import MultiSelectPillInput from "@/Components/Forms/MultiSelectPillInput";
 import {CornerDownLeft} from "lucide-react";
+import {Variation} from "@/Components/Product/types";
+import ProductVariationsManager from "@/Components/Product/ProductVariationsManager";
 
 interface Category {
     value: number;
@@ -39,7 +41,8 @@ const Create = ({
         base_price: 0,
         is_subscribable: false,
         category_ids: [],
-        tag_ids: []
+        tag_ids: [],
+        variations: [],
     });
 
     const handleReturn = () => {
@@ -59,9 +62,17 @@ const Create = ({
         setData('tag_ids', selectedIds.map(id => Number(id)));
     };
 
+    const handleVariationsChange = (updatedVariations: Variation[]) => {
+        setData('variations', updatedVariations);
+    };
+
     const actionsRoot = [
         { icon: CornerDownLeft, label: 'Return to Products', onClick: handleReturn, variant: 'secondary' }
     ];
+
+    // Define which attributes your variations will have (for this product type)
+    const variationAttributeNames = ['Size']; // Example: Just Size
+    // const variationAttributeNames = ['Size', 'Color']; // Example: Size and Color
 
     return (
         <VendorLayout>
@@ -151,6 +162,15 @@ const Create = ({
                         onChange={handleTagChange}
                         placeholder="Select tags..."
                         id="product-tags"
+                    />
+
+                    <ProductVariationsManager
+                        initialVariations={data.variations}
+                        onChange={handleVariationsChange}
+                        attributeNames={variationAttributeNames}
+                        basePrice={data.base_price}
+                        errors={errors}
+                        disabled={processing}
                     />
 
                     <ButtonRow>
