@@ -12,7 +12,7 @@ import NumberField from "@/Components/Forms/NumberField";
 import MultiSelectPillInput from "@/Components/Forms/MultiSelectPillInput";
 import {CornerDownLeft} from "lucide-react";
 import {Variation} from "@/Components/Product/types";
-import ProductVariationsManager from "@/Components/Product/ProductVariationsManager";
+import ProductVariationsManager from "@/Components/ProductVariations/ProductVariationsManager";
 
 interface Category {
     value: number;
@@ -62,8 +62,8 @@ const Create = ({
         setData('tag_ids', selectedIds.map(id => Number(id)));
     };
 
-    const handleVariationsChange = (updatedVariations: Variation[]) => {
-        setData('variations', updatedVariations);
+    const handleVariationsChange = (variations: any[]) => {
+        setData('variations', variations);
     };
 
     const actionsRoot = [
@@ -164,14 +164,21 @@ const Create = ({
                         id="product-tags"
                     />
 
-                    <ProductVariationsManager
-                        initialVariations={data.variations}
-                        onChange={handleVariationsChange}
-                        attributeNames={variationAttributeNames}
-                        basePrice={data.base_price}
-                        errors={errors}
-                        disabled={processing}
-                    />
+                    {/*<ProductVariationsManager*/}
+                    {/*    initialVariations={data.variations}*/}
+                    {/*    onChange={handleVariationsChange}*/}
+                    {/*    attributeNames={variationAttributeNames}*/}
+                    {/*    basePrice={data.base_price}*/}
+                    {/*    errors={errors}*/}
+                    {/*    disabled={processing}*/}
+                    {/*/>*/}
+
+                    <div className="mt-8 border-t pt-8">
+                        <ProductVariationsManager
+                            onChange={handleVariationsChange}
+                            initialVariations={data.variations}
+                        />
+                    </div>
 
                     <ButtonRow>
                         <Submit processing={processing} />

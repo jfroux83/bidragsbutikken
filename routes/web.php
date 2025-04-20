@@ -11,6 +11,7 @@ use App\Http\Controllers\CustomerDashboardController;
 use App\Http\Controllers\OrganizationCustomerController;
 use App\Http\Controllers\OrganizationDashboardController;
 use App\Http\Controllers\PostalCodeController;
+use App\Http\Controllers\ProductAttributeController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductTagController;
@@ -180,6 +181,11 @@ Route::prefix('vendor')->name('vendor.')->middleware(['auth', 'profile:vendor'])
             Route::get('/{tag}/edit', [ProductTagController::class, 'edit'])->name('edit');
             Route::put('/{tag}', [ProductTagController::class, 'update'])->name('update');
             Route::delete('/{tag}', [ProductTagController::class, 'destroy'])->name('destroy');
+        });
+
+        // Attributes
+        Route::prefix('attribute')->name('attribute.')->group(function () {
+            Route::get('/', [ProductAttributeController::class, 'index'])->name('index');
         });
     });
 });
