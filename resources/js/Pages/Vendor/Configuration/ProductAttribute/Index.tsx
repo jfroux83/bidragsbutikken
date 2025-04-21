@@ -1,9 +1,14 @@
 import {Head} from "@inertiajs/react";
 import VendorLayout from "@/Layouts/VendorLayout";
 import PageLayout from "@/Components/UI/PageLayout";
-import AttributeList from "@/Components/ProductAttributes/AttributeList";
+import AttributeManager from "@/Components/ProductAttributes/AttributeManager";
+import {Attribute} from "@/Components/ProductAttributes/types";
 
-const Index = () => {
+interface Props {
+    attributes: Attribute[];
+}
+
+const Index = ({ attributes }: Props) => {
 
     return (
         <VendorLayout>
@@ -11,7 +16,7 @@ const Index = () => {
             <PageLayout
                 title="Product Attributes"
             >
-                <AttributeList attributes={[]} />
+                <AttributeManager initialAttributes={attributes} />
             </PageLayout>
         </VendorLayout>
     )

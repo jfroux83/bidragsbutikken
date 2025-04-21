@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ProductAttribute;
+use App\Models\ProductAttributeValue;
+use Illuminate\Http\JsonResponse;
 use Inertia\Response;
 use Inertia\ResponseFactory;
 
@@ -9,6 +12,48 @@ class ProductAttributeController extends Controller
 {
     public function index(): Response|ResponseFactory
     {
-        return inertia('Vendor/Configuration/ProductAttribute/Index', []);
+        $attributes = ProductAttribute::with(['values'])
+            ->where('vendor_id', session('vendor_id'))
+            ->get()
+            ->map(fn ($attribute) => [
+                'id' => $attribute->id,
+                'name' => $attribute->name,
+                'values' => $attribute->values->map(fn ($value) => [
+                    'id' => $value->id,
+                    'value' => $value->value,
+                ])
+            ]);
+
+        return inertia('Vendor/Configuration/ProductAttribute/Index', [
+            'attributes' => $attributes,
+        ]);
+    }
+
+    public function store(): JsonResponse
+    {
+        $validated = request()->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'values' => ['required', 'array', 'min:1'],
+            'values.*' => ['required', 'string', 'max:255']
+        ]);
+
+        // Create the attribute
+        $attribute = ProductAttribute::create([
+            'vendor_id' => session('vendor_id'),
+            'name' => $validated['name'],
+        ]);
+
+        // Create all the values
+        foreach ($validated['values'] as $value) {
+            ProductAttributeValue::create([
+                'product_attribute_id' => $attribute->id,
+                'value' => $value,
+            ]);
+        }
+
+        // Load the values relation
+        $attribute->load('values');
+
+        return response()->json($attribute);
     }
 }

@@ -1,5 +1,5 @@
 export interface AttributeValue {
-    id: number;
+    id?: number;
     value: string;
 }
 
