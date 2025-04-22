@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @method static create(array $array)
+ * @method static find(mixed $id)
  */
 class ProductAttributeValue extends Model
 {

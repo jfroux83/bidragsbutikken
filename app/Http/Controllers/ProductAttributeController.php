@@ -56,4 +56,41 @@ class ProductAttributeController extends Controller
 
         return response()->json($attribute);
     }
+
+    public function update(ProductAttribute $attribute): JsonResponse
+    {
+        $validated = request()->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'values' => ['required', 'array', 'min:1'],
+        ]);
+
+        $attribute->update([
+            'name' => $validated['name'],
+        ]);
+
+        $existingValueIds = [];
+        $newValues = [];
+
+        foreach ($validated['values'] as $valueData) {
+            if (isset($valueData['id'])) {
+                $existingValueIds[] = $valueData['id'];
+                $attributeValue = ProductAttributeValue::find($valueData['id']);
+                if ($attributeValue) {
+                    $attributeValue->update(['value' => $valueData['value']]);
+                }
+            } else {
+                $newValues[] = new ProductAttributeValue(['value' => $valueData['value']]);
+            }
+        }
+
+        $attribute->values()->whereNotIn('id', $existingValueIds)->delete();
+
+        if (!empty($newValues)) {
+            $attribute->values()->saveMany($newValues);
+        }
+
+        $attribute->load('values');
+
+        return response()->json($attribute);
+    }
 }

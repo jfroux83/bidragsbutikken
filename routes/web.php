@@ -187,6 +187,7 @@ Route::prefix('vendor')->name('vendor.')->middleware(['auth', 'profile:vendor'])
         Route::prefix('attribute')->name('attribute.')->group(function () {
             Route::get('/', [ProductAttributeController::class, 'index'])->name('index');
             Route::post('/', [ProductAttributeController::class, 'store'])->name('store');
+            Route::put('/{attribute}', [ProductAttributeController::class, 'update'])->name('update');
         });
     });
 });

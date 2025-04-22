@@ -4,6 +4,7 @@ import AttributeList from "@/Components/ProductAttributes/AttributeList";
 import AttributeForm from "@/Components/ProductAttributes/AttributeForm";
 import {Attribute, AttributeValue} from "./types";
 import axios from "axios";
+import ConfirmDeleteModal from "@/Components/ProductAttributes/ConfirmDeleteModal";
 
 interface Props {
     initialAttributes: Attribute[];
@@ -37,7 +38,21 @@ const AttributeManager = ({ initialAttributes }: Props) => {
     };
 
     const handleUpdateAttribute = async (name: string, values: AttributeValue[]) => {
+        if (!editingAttribute) return;
 
+        try {
+            const response = await axios.put(`/vendor/product/attribute/${editingAttribute.id}`, {
+                name,
+                values
+            });
+
+            setAttributes(attributes.map(attr =>
+                attr.id === editingAttribute.id ? response.data : attr
+            ));
+            setEditingAttribute(null);
+        } catch (error) {
+            console.error('Error updating attribute:', error);
+        }
     };
 
     const handleDeleteAttribute = async () => {
@@ -49,6 +64,10 @@ const AttributeManager = ({ initialAttributes }: Props) => {
     };
 
     const handleEditAttributeValue = async (attributeId: number, valueId: number, value: string) => {
+
+    };
+
+    const handleDeleteAttributeValue = async (attributeId: number, valueId: number) => {
 
     };
 
@@ -116,7 +135,16 @@ const AttributeManager = ({ initialAttributes }: Props) => {
 
             {deleteModal && (
                 // TODO: Confirm Delete Modal
-                <div></div>
+                <ConfirmDeleteModal
+                    isOpen={deleteModal.open}
+                    itemName={deleteModal.name}
+                    onConfirm={deleteModal.type === 'attribute' ? handleDeleteAttribute : () => {
+                        if (deleteModal.valueId) {
+                            handleDeleteAttributeValue(deleteModal.attributeId, deleteModal.valueId);
+                        }
+                    }}
+                    onCancel={() => setDeleteModal(null)}
+                />
             )}
         </div>
     );
