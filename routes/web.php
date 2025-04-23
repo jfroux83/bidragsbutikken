@@ -188,6 +188,9 @@ Route::prefix('vendor')->name('vendor.')->middleware(['auth', 'profile:vendor'])
             Route::get('/', [ProductAttributeController::class, 'index'])->name('index');
             Route::post('/', [ProductAttributeController::class, 'store'])->name('store');
             Route::put('/{attribute}', [ProductAttributeController::class, 'update'])->name('update');
+            Route::delete('/{attribute}', [ProductAttributeController::class, 'destroy'])->name('destroy');
+            Route::put('/{attribute}/values/{value}', [ProductAttributeController::class, 'updateValue'])->name('update-value');
+            Route::delete('/{attribute}/values/{value}', [ProductAttributeController::class, 'destroyValue'])->name('destroy-value');
         });
     });
 });

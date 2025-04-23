@@ -2,9 +2,9 @@ import {useState} from "react";
 import {Plus} from "lucide-react";
 import AttributeList from "@/Components/ProductAttributes/AttributeList";
 import AttributeForm from "@/Components/ProductAttributes/AttributeForm";
+import ConfirmDeleteModal from "@/Components/ProductAttributes/ConfirmDeleteModal";
 import {Attribute, AttributeValue} from "./types";
 import axios from "axios";
-import ConfirmDeleteModal from "@/Components/ProductAttributes/ConfirmDeleteModal";
 
 interface Props {
     initialAttributes: Attribute[];
@@ -56,19 +56,64 @@ const AttributeManager = ({ initialAttributes }: Props) => {
     };
 
     const handleDeleteAttribute = async () => {
+        if (!deleteModal || deleteModal.type !== 'attribute') return;
 
+        try {
+            await axios.delete(`/vendor/product/attribute/${deleteModal.attributeId}`);
+
+            setAttributes(attributes.filter(attr => attr.id !== deleteModal.attributeId));
+            setDeleteModal(null);
+        } catch (error) {
+            console.error('Error deleting attribute:', error);
+        }
     };
 
     const handleAddAttributeValue = async (attributeId: number) => {
-
+        const attribute = attributes.find(attr => attr.id === attributeId);
+        if (attribute) {
+            setEditingAttribute(attribute);
+        }
     };
 
     const handleEditAttributeValue = async (attributeId: number, valueId: number, value: string) => {
+        try {
+            await axios.put(`/vendor/product/attribute/${attributeId}/values/${valueId}`, {
+                value
+            });
 
+            setAttributes(attributes.map(attr => {
+                if (attr.id === attributeId) {
+                    return {
+                        ...attr,
+                        values: attr.values.map(v => v.id === valueId ? { ...v, value } : v)
+                    };
+                }
+                return attr;
+            }));
+        } catch (error) {
+            console.error('Error updating attribute value:', error);
+        }
     };
 
     const handleDeleteAttributeValue = async (attributeId: number, valueId: number) => {
+        if (deleteModal?.type === 'value') {
+            try {
+                await axios.delete(`/vendor/product/attribute/${attributeId}/values/${valueId}`);
 
+                setAttributes(attributes.map(attr => {
+                    if (attr.id === attributeId) {
+                        return {
+                            ...attr,
+                            values: attr.values.filter(v => v.id !== valueId)
+                        };
+                    }
+                    return attr;
+                }));
+            } catch (error) {
+                console.error('Error deleting attribute value:', error);
+            }
+        }
+        setDeleteModal(null);
     };
 
     return (
@@ -134,7 +179,6 @@ const AttributeManager = ({ initialAttributes }: Props) => {
             />
 
             {deleteModal && (
-                // TODO: Confirm Delete Modal
                 <ConfirmDeleteModal
                     isOpen={deleteModal.open}
                     itemName={deleteModal.name}

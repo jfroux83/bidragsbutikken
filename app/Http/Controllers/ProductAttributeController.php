@@ -93,4 +93,39 @@ class ProductAttributeController extends Controller
 
         return response()->json($attribute);
     }
+
+    public function destroy(ProductAttribute $attribute): JsonResponse
+    {
+        $attribute->delete();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function updateValue(ProductAttribute $attribute, ProductAttributeValue $value): JsonResponse
+    {
+        $validated = request()->validate([
+            'value' => ['required', 'string', 'max:255'],
+        ]);
+
+        // Ensure this value belongs to the attribute
+        if ($value->product_attribute_id !== $attribute->id) {
+            return response()->json(['error' => 'Value does not belong to this attribute'], 403);
+        }
+
+        $value->update(['value' => $validated['value']]);
+
+        return response()->json($value);
+    }
+
+    public function destroyValue(ProductAttribute $attribute, ProductAttributeValue $value): JsonResponse
+    {
+        // Ensure this value belongs to the attribute
+        if ($value->product_attribute_id !== $attribute->id) {
+            return response()->json(['error' => 'Value does not belong to this attribute'], 403);
+        }
+
+        $value->delete();
+
+        return response()->json(['success' => true]);
+    }
 }
