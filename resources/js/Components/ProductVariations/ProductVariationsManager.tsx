@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import VariationsList from "@/Components/ProductVariations/VariationsList";
 import VariationForm from "@/Components/ProductVariations/VariationForm";
 
@@ -15,21 +15,29 @@ interface ProductVariation {
     }[];
 }
 
+interface Attribute {
+    name: string;
+    values: string[];
+}
+
 interface Props {
     productId?: number;
     initialVariations?: ProductVariation[];
     onChange: (variations: ProductVariation[]) => void;
+    attributes: Attribute[];
 }
 
 const ProductVariationsManager = ({
     productId,
     initialVariations = [],
-    onChange
+    onChange,
+    attributes,
 }: Props) => {
 
-    const [variations, setVariations] = useState<ProductVariation[]>(initialVariations);
+    //const [variations, setVariations] = useState<ProductVariation[]>(() => initialVariations);
     const [isAddingVariation, setIsAddingVariation] = useState(false);
     const [editingVariation, setEditingVariation] = useState<ProductVariation | null>(null);
+    const variations = initialVariations;
 
     const handleAddVariation = (variation: ProductVariation) => {
         const newVariation = {
@@ -39,19 +47,20 @@ const ProductVariationsManager = ({
             id: productId ? undefined : Math.floor(Math.random() * -1000)
         };
 
-        setVariations([...variations, newVariation]);
+        // Pass the new array directly to onChange
+        onChange([...variations, newVariation]);
         setIsAddingVariation(false);
     };
 
     const handleUpdateVariation = (updatedVariation: ProductVariation) => {
-        setVariations(variations.map(v =>
+        onChange(variations.map(v =>
             v.id === updatedVariation.id ? updatedVariation : v
         ));
         setEditingVariation(null);
     };
 
     const handleDeleteVariation = (variationId: number) => {
-        setVariations(variations.filter(v => v.id !== variationId));
+        onChange(variations.filter(v => v.id !== variationId));
     };
 
     return (
@@ -61,7 +70,7 @@ const ProductVariationsManager = ({
                 <button
                     onClick={() => setIsAddingVariation(true)}
                     disabled={isAddingVariation || !!editingVariation}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm"
+                    className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm"
                 >
                     Add Variation
                 </button>
@@ -99,6 +108,7 @@ const ProductVariationsManager = ({
                             setIsAddingVariation(false);
                             setEditingVariation(null);
                         }}
+                        availableAttributes={attributes}
                     />
                 </div>
             )}

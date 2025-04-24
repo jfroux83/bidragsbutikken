@@ -10,9 +10,8 @@ import Textarea from "@/Components/Forms/Textarea";
 import Radio from "@/Components/Forms/Radio";
 import NumberField from "@/Components/Forms/NumberField";
 import MultiSelectPillInput from "@/Components/Forms/MultiSelectPillInput";
-import {CornerDownLeft} from "lucide-react";
-import {Variation} from "@/Components/Product/types";
 import ProductVariationsManager from "@/Components/ProductVariations/ProductVariationsManager";
+import {CornerDownLeft} from "lucide-react";
 
 interface Category {
     value: number;
@@ -24,14 +23,21 @@ interface Tag {
     label: string;
 }
 
+interface Attribute {
+    name: string;
+    values: string[];
+}
+
 interface Props {
     categories: Category[];
-    tags: Tag[]
+    tags: Tag[];
+    attributes: Attribute[];
 }
 
 const Create = ({
     categories,
-    tags
+    tags,
+    attributes
 }: Props) => {
 
     const { data, setData, post, processing, errors } = useForm({
@@ -63,16 +69,15 @@ const Create = ({
     };
 
     const handleVariationsChange = (variations: any[]) => {
-        setData('variations', variations);
+        setData(prevData => ({
+            ...prevData,
+            variations: variations
+        }));
     };
 
     const actionsRoot = [
         { icon: CornerDownLeft, label: 'Return to Products', onClick: handleReturn, variant: 'secondary' }
     ];
-
-    // Define which attributes your variations will have (for this product type)
-    const variationAttributeNames = ['Size']; // Example: Just Size
-    // const variationAttributeNames = ['Size', 'Color']; // Example: Size and Color
 
     return (
         <VendorLayout>
@@ -164,19 +169,11 @@ const Create = ({
                         id="product-tags"
                     />
 
-                    {/*<ProductVariationsManager*/}
-                    {/*    initialVariations={data.variations}*/}
-                    {/*    onChange={handleVariationsChange}*/}
-                    {/*    attributeNames={variationAttributeNames}*/}
-                    {/*    basePrice={data.base_price}*/}
-                    {/*    errors={errors}*/}
-                    {/*    disabled={processing}*/}
-                    {/*/>*/}
-
                     <div className="mt-8 border-t pt-8">
                         <ProductVariationsManager
                             onChange={handleVariationsChange}
                             initialVariations={data.variations}
+                            attributes={attributes}
                         />
                     </div>
 

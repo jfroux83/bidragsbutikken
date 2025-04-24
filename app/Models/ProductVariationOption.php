@@ -10,7 +10,7 @@ class ProductVariationOption extends Model
     protected $fillable = [
         'variation_id',
         'attribute_name',
-        'attribute_key',
+        'attribute_value',
     ];
 
     public function variation(): BelongsTo

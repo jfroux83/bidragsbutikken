@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\ProductAttribute;
 use App\Models\ProductCategory;
 use App\Models\ProductTag;
 use Exception;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Inertia\Response;
 use Inertia\ResponseFactory;
@@ -35,7 +37,8 @@ class ProductController extends Controller
     {
         return inertia('Vendor/Configuration/Product/Create', [
             'categories' => $this->getCategories(),
-            'tags' => $this->getTags()
+            'tags' => $this->getTags(),
+            'attributes' => $this->getAttributes(),
         ]);
     }
 
@@ -51,9 +54,19 @@ class ProductController extends Controller
             'category_ids.*' => ['required', 'integer', 'exists:product_categories,id'],
             'tag_ids' => ['nullable', 'array'],
             'tag_ids.*' => ['required', 'integer', 'exists:product_tags,id'],
+            'variations' => ['nullable', 'array'],
+            'variations.*.sku' => ['required', 'string', 'max:100'],
+            'variations.*.price' => ['required', 'numeric', 'min:0'],
+            'variations.*.stock' => ['required', 'integer', 'min:0'],
+            'variations.*.is_active' => ['required', 'boolean'],
+            'variations.*.options' => ['required', 'array', 'min:1'],
+            'variations.*.options.*.attribute_name' => ['required', 'string'],
+            'variations.*.options.*.attribute_value' => ['required', 'string'],
         ]);
 
         try {
+            DB::beginTransaction();
+
             $product = Product::create([
                 'vendor_id' => session('vendor_id'),
                 'name' => $validated['name'],
@@ -75,11 +88,34 @@ class ProductController extends Controller
                 $product->tags()->detach();
             }
 
+            // Save variations
+            if (!empty($validated['variations'])) {
+                foreach ($validated['variations'] as $variationData) {
+                    $variation = $product->variations()->create([
+                        'sku' => $variationData['sku'],
+                        'price' => $variationData['price'],
+                        'stock' => $variationData['stock'],
+                        'is_active' => $variationData['is_active'],
+                    ]);
+
+                    // Save variation options
+                    foreach ($variationData['options'] as $option) {
+                        $variation->options()->create([
+                            'attribute_name' => $option['attribute_name'],
+                            'attribute_value' => $option['attribute_value'],
+                        ]);
+                    }
+                }
+            }
+
+            DB::commit();
+
             return redirect()
                 ->route('vendor.product.index')
                 ->with('success', 'Product created successfully.');
 
         } catch (Exception $e) {
+            DB::rollBack();
             Log::channel('custom_errors')->error(ProductController::class . '::store(): ' .  $e->getMessage());
             return redirect()
                 ->back()
@@ -172,6 +208,17 @@ class ProductController extends Controller
             ->map(fn ($tag) => [
                 'value' => $tag->id,
                 'label' => $tag->name,
+            ]);
+    }
+
+    private function getAttributes()
+    {
+        return ProductAttribute::with(['values'])
+            ->where('vendor_id', session('vendor_id'))
+            ->get()
+            ->map(fn ($attribute) => [
+                'name' => $attribute->name,
+                'values' => $attribute->values->map(fn ($value) => $value->value)
             ]);
     }
 }
