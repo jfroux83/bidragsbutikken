@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import VariationsList from "@/Components/ProductVariations/VariationsList";
 import VariationForm from "@/Components/ProductVariations/VariationForm";
 

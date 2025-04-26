@@ -118,8 +118,7 @@ const AttributeManager = ({ initialAttributes }: Props) => {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <h2 className="text-xl font-semibold">Product Attributes</h2>
+            <div className="flex justify-end items-center">
                 <button
                     onClick={() => setIsAddingAttribute(true)}
                     disabled={isAddingAttribute || !!editingAttribute}

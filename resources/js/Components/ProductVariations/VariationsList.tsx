@@ -111,12 +111,14 @@ const VariationsList = ({
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <button
+                                    type="button"
                                     onClick={() => onEdit(variation)}
                                     className="text-indigo-600 hover:text-indigo-900 mr-3"
                                 >
                                     <Edit size={16} />
                                 </button>
                                 <button
+                                    type="button"
                                     onClick={() => variation.id && onDelete(variation.id)}
                                     className="text-red-600 hover:text-red-900"
                                 >

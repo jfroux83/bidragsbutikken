@@ -74,6 +74,14 @@ class AdminVendorController extends Controller
         ]);
 
         try {
+            // Check if email already exists in users table before creating organization
+            if (User::where('email', $validate['email'])->exists()) {
+                return redirect()
+                    ->back()
+                    ->withInput()
+                    ->with('error', 'A user with this email address already exists.');
+            }
+
             $vendor = Vendor::create([
                 'status' => $validate['status'],
                 'name' => $validate['name'],
@@ -98,9 +106,12 @@ class AdminVendorController extends Controller
             $registration = $this->userRegistrationService->userRegistration('vendor', $vendor->id, $validate['email']);
 
             if (!$registration) {
+                // Delete the created vendor since user registration failed
+                $vendor->delete();
+
                 return redirect()
                     ->route('admin.vendor.index')
-                    ->with('error', 'Vendor was successfully created but the user registration failed. Please investigate the logs.');
+                    ->with('error', 'Registration failed: Email address is already in use.');
             }
 
             return redirect()
@@ -182,6 +193,10 @@ class AdminVendorController extends Controller
                 'bonus_fee' => $validate['bonusFee'],
                 'max_delivery_distance' => $validate['maxDeliveryDistance'],
             ]);
+
+            $user_id = VendorUser::where('vendor_id', $vendor->id)->first()->user_id;
+            $user = User::where('id', $user_id)->first();
+            $user->update(['email' => $validate['email']]);
 
             return redirect()
                 ->route('admin.vendor.index')

@@ -10,6 +10,7 @@ import Textarea from "@/Components/Forms/Textarea";
 import Radio from "@/Components/Forms/Radio";
 import NumberField from "@/Components/Forms/NumberField";
 import MultiSelectPillInput from "@/Components/Forms/MultiSelectPillInput";
+import ProductVariationsManager from "@/Components/ProductVariations/ProductVariationsManager";
 import {CornerDownLeft} from "lucide-react";
 
 interface Product {
@@ -21,6 +22,7 @@ interface Product {
     is_subscribable: boolean;
     category_ids: number[];
     tag_ids: number[];
+    variations: any[];
 }
 
 interface Category {
@@ -33,16 +35,23 @@ interface Tag {
     label: string;
 }
 
+interface Attribute {
+    name: string;
+    values: string[];
+}
+
 interface Props {
     product: Product;
     categories: Category[];
-    tags: Tag[]
+    tags: Tag[];
+    attributes: Attribute[];
 }
 
 const Edit = ({
     product,
     categories,
-    tags
+    tags,
+    attributes
 }: Props) => {
 
     const { data, setData, put, processing, errors } = useForm({
@@ -53,6 +62,7 @@ const Edit = ({
         is_subscribable: product.is_subscribable,
         category_ids: product.category_ids,
         tag_ids: product.tag_ids,
+        variations: product.variations || []
     });
 
     const handleReturn = () => {
@@ -70,6 +80,13 @@ const Edit = ({
 
     const handleTagChange = (selectedIds: (number | string)[]) => {
         setData('tag_ids', selectedIds.map(id => Number(id)));
+    };
+
+    const handleVariationsChange = (variations: any[]) => {
+        setData(prevData => ({
+            ...prevData,
+            variations: variations
+        }));
     };
 
     const actionsRoot = [
@@ -165,6 +182,15 @@ const Edit = ({
                         placeholder="Select tags..."
                         id="product-tags"
                     />
+
+                    <div className="mt-8 border-t pt-8">
+                        <ProductVariationsManager
+                            productId={product.id}
+                            onChange={handleVariationsChange}
+                            initialVariations={data.variations}
+                            attributes={attributes}
+                        />
+                    </div>
 
                     <ButtonRow>
                         <Submit processing={processing} />

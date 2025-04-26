@@ -3,8 +3,8 @@ import {Head, router} from "@inertiajs/react";
 import VendorLayout from "@/Layouts/VendorLayout";
 import PageLayout from "@/Components/UI/PageLayout";
 import {ClientDataTable} from "@/Components/DataTable/ClientDataTable";
-import {Action, BaseColumn} from "@/Components/DataTable/DataTable";
 import ConfirmationDialog from "@/Components/UI/ConfirmationDialog";
+import {Action, BaseColumn} from "@/Components/DataTable/DataTable";
 import {Edit, Plus, Trash2} from "lucide-react";
 
 interface Product {
@@ -76,9 +76,16 @@ const Index = ({
         router.get(`/vendor/product/${product.id}/edit`);
     };
 
-    const handleDelete = (product: Product) => {};
+    const handleDelete = (product: Product) => {
+        setRecordToDelete(product);
+        setDeleteConfirm(true);
+    };
 
-    const confirmDelete = () => {};
+    const confirmDelete = () => {
+        if (recordToDelete) {
+            router.delete(`/vendor/product/${recordToDelete.id}`);
+        }
+    };
 
     const actionsRoot = [
         { icon: Plus, label: 'Create Product', onClick: handleCreate }

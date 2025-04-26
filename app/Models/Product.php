@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property mixed $is_subscribable
  * @property mixed $categories
  * @property mixed $tags
+ * @property mixed $variations
  */
 class Product extends Model
 {
