@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('invoice_lines', function (Blueprint $table) {
+        /*Schema::table('invoice_lines', function (Blueprint $table) {
             $table->dropForeign('fk_invoice_lines_document_header');
             $table->dropColumn('document_header_document_header_id');
             $table->dropColumn('supplier_price');
@@ -36,7 +36,7 @@ return new class extends Migration
             $table->foreign('product_id')->references('product_id')->on('product');
             $table->decimal('unit_price', 10, 2)->default(0);
             $table->decimal('line_total', 10, 2)->default(0);
-        });
+        });*/
     }
 
     /**
@@ -44,8 +44,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('invoice_lines', function (Blueprint $table) {
+        /*Schema::table('invoice_lines', function (Blueprint $table) {
             //
-        });
+        });*/
     }
 };

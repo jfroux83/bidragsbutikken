@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('delivery_plan_lines', function (Blueprint $table) {
+        /*Schema::create('delivery_plan_lines', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('delivery_plan_header_id');
             $table->foreign('delivery_plan_header_id')->references('id')->on('delivery_plan_headers');
@@ -22,7 +22,7 @@ return new class extends Migration
             $table->integer('delivery_frequency');
             $table->string('payment_option');
             $table->integer('quantity');
-        });
+        });*/
     }
 
     /**
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('delivery_plan_lines');
+        // Schema::dropIfExists('delivery_plan_lines');
     }
 };
