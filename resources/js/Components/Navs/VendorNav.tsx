@@ -22,6 +22,15 @@ const navigation: NavItem[] = [
         items: [
             { title: 'View Customers', href: '/vendor/customer', description: 'Manage Customers' },
         ]
+    },
+    {
+        title: 'Products',
+        items: [
+            { title: 'View Products', href: '/vendor/product', description: 'Manage Products' },
+            { title: 'View Product Categories', href: '/vendor/product/category', description: 'Manage Product Categories' },
+            { title: 'View Product Tags', href: '/vendor/product/tag', description: 'Manage Product Tags' },
+            { title: 'View Product Attributes', href: '/vendor/product/attribute', description: 'Manage Product Attributes' },
+        ]
     }
 ];
 

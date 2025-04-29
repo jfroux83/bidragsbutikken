@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\CustomerUser;
 use App\Models\PostalCode;
+use App\Models\User;
 use App\Services\UserRegistrationService;
 use Exception;
 use Illuminate\Http\RedirectResponse;
@@ -65,6 +67,14 @@ class VendorCustomerController extends Controller
         ]);
 
         try {
+            // Check if email already exists in users table before creating organization
+            if (User::where('email', $validate['email'])->exists()) {
+                return redirect()
+                    ->back()
+                    ->withInput()
+                    ->with('error', 'A user with this email address already exists.');
+            }
+
             $customer = Customer::create([
                 'first_name' => $validate['firstName'],
                 'last_name' => $validate['lastName'],
@@ -79,9 +89,12 @@ class VendorCustomerController extends Controller
             $registration = $this->userRegistrationService->userRegistration('customer', $customer->id, $validate['email']);
 
             if (!$registration) {
+                // Delete the created customer since user registration failed
+                $customer->delete();
+
                 return redirect()
                     ->route('organization.customer.index')
-                    ->with('error', 'Customer was successfully created but the user registration failed. Please investigate the logs');
+                    ->with('error', 'Registration failed: Email address is already in use.');
             }
 
             return redirect()
@@ -145,6 +158,10 @@ class VendorCustomerController extends Controller
                 'postal_code' => $validate['postalCode'],
                 'referredBy' => $validate['referredBy'],
             ]);
+
+            $user_id = CustomerUser::where('customer_id', $customer->id)->first()->user_id;
+            $user = User::where('id', $user_id)->first();
+            $user->update(['email' => $validate['email']]);
 
             return redirect()
                 ->route('vendor.customer.index')

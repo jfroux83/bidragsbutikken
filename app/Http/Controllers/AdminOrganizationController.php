@@ -78,6 +78,14 @@ class AdminOrganizationController extends Controller
         ]);
 
         try {
+            // Check if email already exists in users table before creating organization
+            if (User::where('email', $validate['email'])->exists()) {
+                return redirect()
+                    ->back()
+                    ->withInput()
+                    ->with('error', 'A user with this email address already exists.');
+            }
+
             $organization = Organization::create([
                 'status' => $validate['status'],
                 'name' => $validate['name'],
@@ -95,9 +103,12 @@ class AdminOrganizationController extends Controller
             $registration = $this->userRegistrationService->userRegistration('organization', $organization->id, $validate['email']);
 
             if (!$registration) {
+                // Delete the created organization since user registration failed
+                $organization->delete();
+
                 return redirect()
                     ->route('admin.organization.index')
-                    ->with('error', 'Organization was successfully created but the user registration failed. Please investigate the logs');
+                    ->with('error', 'Registration failed: Email address is already in use.');
             }
 
             return redirect()
@@ -160,6 +171,10 @@ class AdminOrganizationController extends Controller
                 'email' => $validate['email'],
                 'updated_at' => now(),
             ]);
+
+            $user_id = OrganizationUser::where('organization_id', $organization->id)->first()->user_id;
+            $user = User::where('id', $user_id)->first();
+            $user->update(['email' => $validate['email']]);
 
             return redirect()
                 ->route('admin.organization.index')
