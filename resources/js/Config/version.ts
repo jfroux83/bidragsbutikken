@@ -37,6 +37,23 @@ export const versions: Version[] = [
             'Change: Admin -> Postal codes',
             'Change: Admin -> Authentication logic'
         ]
+    },
+    {
+        major: 1,
+        minor: 2,
+        patch: 0,
+        releaseDate: '2025-04-29',
+        notes: [
+            'Feature: Vendor -> Product Categories',
+            'Feature: Vendor -> Product Tags',
+            'Feature: Vendor -> Product Attributes',
+            'Feature: Vendor -> Products',
+            'Feature: Vendor -> Product Variations',
+            'Feature: Admin -> Product Categories (global view)',
+            'Feature: Admin -> Product Tags (global view)',
+            'Change: Add unique email check when registering users (admin, organization, vendor, customer)',
+            'Change: Add email sync to default user when changing email address (organization, vendor, customer)'
+        ]
     }
 ];
 

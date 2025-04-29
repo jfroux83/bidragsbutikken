@@ -24,6 +24,11 @@ class UserRegistrationService
 
     public function userRegistration(string $type, int $registerId, string $email): bool
     {
+        // Check if user with this email already exists
+        if (User::where('email', $email)->exists()) {
+            return false;
+        }
+
         $tempPassword = $this->generateTempPassword();
         $token = $this->generateToken();
 

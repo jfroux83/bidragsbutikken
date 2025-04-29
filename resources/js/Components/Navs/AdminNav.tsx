@@ -31,6 +31,13 @@ const navigation: NavItem[] = [
         ]
     },
     {
+        title: 'Products',
+        items: [
+            { title: 'View Product Categories', href: '/admin/product/category', description: 'Manage Product Categories' },
+            { title: 'View Product Tags', href: '/admin/product/tag', description: 'Manage Product Tags' },
+        ]
+    },
+    {
         title: 'Configurations',
         items: [
             { title: 'Postal Codes', href: '/admin/configuration/postal-code', description: 'Manage Postal Codes' },
