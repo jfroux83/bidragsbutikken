@@ -12,6 +12,7 @@ use App\Http\Controllers\OrganizationCustomerController;
 use App\Http\Controllers\OrganizationDashboardController;
 use App\Http\Controllers\PostalCodeController;
 use App\Http\Controllers\ProductAttributeController;
+use App\Http\Controllers\ProductCatalogController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductTagController;
@@ -191,6 +192,11 @@ Route::prefix('vendor')->name('vendor.')->middleware(['auth', 'profile:vendor'])
             Route::delete('/{attribute}', [ProductAttributeController::class, 'destroy'])->name('destroy');
             Route::put('/{attribute}/values/{value}', [ProductAttributeController::class, 'updateValue'])->name('update-value');
             Route::delete('/{attribute}/values/{value}', [ProductAttributeController::class, 'destroyValue'])->name('destroy-value');
+        });
+
+        // Product Catalog
+        Route::prefix('catalog')->name('catalog.')->group(function () {
+            Route::get('/', [ProductCatalogController::class, 'index'])->name('index');
         });
     });
 });

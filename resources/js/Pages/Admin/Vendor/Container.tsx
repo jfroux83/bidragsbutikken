@@ -27,6 +27,7 @@ interface Props {
         contributionFee: number;
         bonusFee: number;
         maxDeliveryDistance: number;
+        isPublic: boolean;
     };
     postalCodes: Array<{
         label: string;
@@ -58,7 +59,6 @@ const Container = ({
             <Head title="Admin | Vendors" />
             <PageLayout
                 title="Vendor | Edit"
-                // containerClassName="bg-white shadow rounded-md mt-2"
                 // @ts-ignore
                 actions={actionsRoot}
                 fullWidth={true}

@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {Head, router} from "@inertiajs/react";
-import {Action} from "@/Components/DataTable/DataTable";
+import {Action, BaseColumn} from "@/Components/DataTable/DataTable";
 import {Edit, Plus, Trash2} from "lucide-react";
 import PageLayout from "@/Components/UI/PageLayout";
 import {ClientDataTable} from "@/Components/DataTable/ClientDataTable";
@@ -17,6 +17,7 @@ interface Vendor {
     postalCode: string;
     telephone: string;
     email: string;
+    isPublic: boolean;
 }
 
 interface Props {
@@ -31,7 +32,7 @@ const Index = ({
     const [deleteConfirm, setDeleteConfirm] = useState(false);
     const [recordToDelete, setRecordToDelete] = useState<Vendor | null>(null);
 
-    const columns = [
+    const columns: BaseColumn<Vendor>[] = [
         {
             key: "name",
             title: "Name",
@@ -95,6 +96,17 @@ const Index = ({
                     'false': { label: "Inactive", className: "text-gray-800 bg-red-100" },
                 }
             }
+        },
+        {
+            key: 'isPublic',
+            title: 'Public Visible',
+            type: 'status',
+            config: {
+                status: {
+                    'true': { label: 'Yes', className: 'text-green-800 bg-green-100' },
+                    'false': { label: 'No', className: 'text-gray-800 bg-red-100' },
+                }
+            }
         }
     ];
 
@@ -132,13 +144,10 @@ const Index = ({
             <Head title="Admin | Vendors" />
             <PageLayout
                 title="Vendors"
-                // containerClassName="bg-white shadow rounded-md mt-2"
-                // @ts-ignore
                 actions={actionsRoot}
                 fullWidth={true}
             >
                 <ClientDataTable
-                    // @ts-ignore
                     columns={columns}
                     data={initialData}
                     actions={actions}
