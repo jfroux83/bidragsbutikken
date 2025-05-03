@@ -197,6 +197,8 @@ Route::prefix('vendor')->name('vendor.')->middleware(['auth', 'profile:vendor'])
         // Product Catalog
         Route::prefix('catalog')->name('catalog.')->group(function () {
             Route::get('/', [ProductCatalogController::class, 'index'])->name('index');
+            Route::get('/vendors', [ProductCatalogController::class, 'vendors'])->name('vendors');
+            Route::get('/vendor/{vendor}/products', [ProductCatalogController::class, 'vendorProducts'])->name('vendor-products');
         });
     });
 });
