@@ -51,10 +51,8 @@ const VendorProducts = ({
     };
 
     const handleAddToCatalog = (productId: number) => {
-        // Here you would implement the logic to add the product to your catalog
-        // For example:
-        router.post(`/vendor/product/add-to-catalog`, {
-            vendor_id: vendor.id,
+        router.post(`/vendor/product/catalog/add-product`, {
+            source_vendor_id: vendor.id,
             product_id: productId
         });
     };
@@ -172,8 +170,8 @@ const VendorProducts = ({
                 {/* Add Modal component at the end of your page layout */}
                 {modalOpen && selectedProduct && (
                     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                        <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 mx-4 max-h-90vh overflow-y-auto">
-                            <div className="flex justify-between items-center mb-4">
+                        <div className="bg-white rounded-lg shadow-xl max-w-5xl w-full p-6 mx-4 h-[80vh] overflow-y-auto">
+                            <div className="flex justify-between items-center mb-4 sticky top-0 bg-white pt-1 pb-3 z-10 border-b">
                                 <h3 className="text-xl font-semibold">{selectedProduct.name}</h3>
                                 <button
                                     onClick={closeModal}
@@ -273,7 +271,7 @@ const VendorProducts = ({
                                     </div>
                                 )}
                             </div>
-                            <div className="mt-6">
+                            <div className="mt-6 sticky bottom-0 bg-white pt-4 border-t">
                                 <button
                                     onClick={() => {
                                         handleAddToCatalog(selectedProduct.id);

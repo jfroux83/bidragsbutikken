@@ -4,7 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @method static create(array $array)
+ * @method static where(string $string, mixed $session)
+ */
 class VendorProductCatalog extends Model
 {
     protected $table = 'vendor_product_catalogs';
@@ -36,5 +41,10 @@ class VendorProductCatalog extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class, 'product_id', 'id');
+    }
+
+    public function prices(): HasMany
+    {
+        return $this->hasMany(VendorProductCatalogPrice::class, 'vendor_product_catalog_id', 'id');
     }
 }

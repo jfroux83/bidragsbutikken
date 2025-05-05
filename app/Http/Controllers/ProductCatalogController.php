@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Vendor;
 use App\Models\VendorProductCatalog;
+use App\Models\VendorProductCatalogPrice;
+use Exception;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
 use Inertia\Response;
 use Inertia\ResponseFactory;
 
@@ -17,8 +21,8 @@ class ProductCatalogController extends Controller
             ->get()
             ->map(fn ($product) => [
                 'id' => $product->id,
-                'vendor_id' => $product->source_vendor_id,
-                'vendor_name' => $product->sourceVendor->name,
+                'source_vendor_id' => $product->source_vendor_id,
+                'source_vendor_name' => $product->sourceVendor->name,
                 'product_id' => $product->product->id,
                 'product_name' => $product->product->name,
             ]);
@@ -87,5 +91,86 @@ class ProductCatalogController extends Controller
             ],
             'products' => $products,
         ]);
+    }
+
+    public function addProduct(): RedirectResponse
+    {
+        $validate = request()->validate([
+            'source_vendor_id' => ['required'],
+            'product_id' => ['required'],
+        ]);
+
+        try {
+            $exists = VendorProductCatalog::where('vendor_id', session('vendor_id'))
+                ->where('product_id', $validate['product_id'])
+                ->where('source_vendor_id', $validate['source_vendor_id'])
+                ->exists();
+
+            if ($exists) {
+                return redirect()
+                    ->back()
+                    ->with('error', 'Product already exists in catalog!');
+            }
+
+            $catalog = VendorProductCatalog::create([
+                'vendor_id' => session('vendor_id'),
+                'source_vendor_id' => $validate['source_vendor_id'],
+                'product_id' => $validate['product_id'],
+            ]);
+
+            // Capture pricing
+            $this->addProductPricing($catalog->id, $validate['product_id']);
+
+            return redirect()
+                ->route('vendor.product.catalog.index')
+                ->with(['success' => 'Product added to catalog successfully.']);
+
+        } catch (Exception $e) {
+            Log::channel('custom_errors')->error(ProductCatalogController::class . '::addProduct(): ' . $e->getMessage());
+            return redirect()
+                ->back()
+                ->with('error', 'Something went wrong. Please try again.');
+        }
+    }
+
+    public function editProduct(Vendor $vendor, Product $product)
+    {
+        dd($vendor, $product);
+    }
+
+    /**
+     * Helper methods
+     */
+    private function addProductPricing(int $catalogId, int $productId): void
+    {
+        try {
+            // lookup product
+            $product = Product::with(['variations'])->where('id', $productId)->first();
+
+            // Capture master base price
+            VendorProductCatalogPrice::create([
+                'vendor_product_catalog_id' => $catalogId,
+                'product_id' => $productId,
+                'product_variation_id' => null,
+                'type' => 'Master',
+                'status' => true,
+                'price' => $product->base_price,
+            ]);
+
+            // Capture variations pricing if exists
+            foreach ($product->variations as $variation) {
+                VendorProductCatalogPrice::create([
+                    'vendor_product_catalog_id' => $catalogId,
+                    'product_id' => $productId,
+                    'product_variation_id' => $variation->id,
+                    'type' => 'Variation',
+                    'status' => true,
+                    'price' => $variation->price,
+                ]);
+            }
+
+        } catch (Exception $e) {
+            Log::channel('custom_errors')->error(ProductCatalogController::class . '::addProductPricing(): ' . $e->getMessage());
+        }
     }
 }
