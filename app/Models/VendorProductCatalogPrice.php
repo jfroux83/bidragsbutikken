@@ -7,6 +7,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @method static create(array $array)
+ * @method static whereHas(string $string, \Closure $param)
+ * @property mixed $id
+ * @property mixed $product
+ * @property mixed $type
+ * @property mixed $status
+ * @property mixed $productVariation
+ * @property mixed $price
+ * @property mixed $product_id
  */
 class VendorProductCatalogPrice extends Model
 {

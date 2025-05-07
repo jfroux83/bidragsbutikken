@@ -3,7 +3,7 @@ import React from "react";
 interface Props {
     name: string;
     label: string;
-    required: boolean;
+    required?: boolean;
     min?: number;
     max?: number;
     value: number;

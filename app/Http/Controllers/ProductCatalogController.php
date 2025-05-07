@@ -133,9 +133,63 @@ class ProductCatalogController extends Controller
         }
     }
 
-    public function editProduct(Vendor $vendor, Product $product)
+    public function editProduct(Vendor $vendor, Product $product): Response|ResponseFactory
     {
-        dd($vendor, $product);
+        $prices = VendorProductCatalogPrice::whereHas('catalog', function ($query) use ($vendor, $product) {
+            $query->where('vendor_id', session('vendor_id'))
+                  ->where('source_vendor_id', $vendor->id)
+                  ->where('product_id', $product->id);
+        })
+        ->where('product_id', $product->id)
+        ->orderBy('id')
+        ->get()
+        ->map(fn ($price) => [
+            'id' => $price->id,
+            'product_variation_id' => $price->product_variation_id,
+            'type' => $price->type,
+            'status' => (bool) $price->status,
+            'price' => $price->price,
+        ]);
+
+        $product->load(['categories', 'tags']);
+
+        return inertia('Vendor/Configuration/ProductCatalog/Edit', [
+            'product' => [
+                'id' => $product->id,
+                'name' => $product->name,
+                'categories' => $product->categories->map(fn ($category) => [
+                    'name' => $category->name,
+                ]),
+                'tags' => $product->tags->map(fn ($tag) => [
+                    'name' => $tag->name,
+                ])
+            ],
+            'source_vendor' => [
+                'id' => $vendor->id,
+                'name' => $vendor->name,
+            ],
+            'prices' => $prices,
+        ]);
+    }
+
+    public function editPrice(VendorProductCatalogPrice $price): Response|ResponseFactory
+    {
+        $price->load(['product', 'productVariation']);
+
+        return inertia('Vendor/Configuration/ProductCatalog/EditPrice', [
+            'price' => [
+                'id' => $price->id,
+                'product' => [
+                    'id' => $price->product_id,
+                    'name' => $price->product->name,
+                    'source_vendor_id' => $price->product->vendor_id
+                ],
+                'type' => $price->type,
+                'status' => (bool) $price->status,
+                'variation' => $price->productVariation?->sku,
+                'price' => $price->price
+            ]
+        ]);
     }
 
     /**
