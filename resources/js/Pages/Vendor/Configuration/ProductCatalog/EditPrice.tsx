@@ -38,7 +38,8 @@ const EditPrice = ({ price }: Props) => {
     })
 
     const handleSubmit = (e: React.FormEvent) => {
-
+        e.preventDefault();
+        put(`/vendor/product/catalog/product/price/${price.id}`);
     };
 
     const handleReturn = () => {
@@ -53,7 +54,7 @@ const EditPrice = ({ price }: Props) => {
         <VendorLayout>
             <Head title="Product Catalog | Product | Price | Edit" />
             <PageLayout
-                title={`Product Catalog | ${price.product} | Price | Edit`}
+                title={`Product Catalog | ${price.product.name} | Price | Edit`}
                 // @ts-ignore
                 actions={actionsRoot}
             >

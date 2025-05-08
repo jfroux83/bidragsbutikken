@@ -202,6 +202,7 @@ Route::prefix('vendor')->name('vendor.')->middleware(['auth', 'profile:vendor'])
             Route::post('/add-product', [ProductCatalogController::class, 'addProduct'])->name('add-product');
             Route::get('/{vendor}/{product}/edit', [ProductCatalogController::class, 'editProduct'])->name('edit-product');
             Route::get('/product/price/{price}/edit', [ProductCatalogController::class, 'editPrice'])->name('edit-price');
+            Route::put('/product/price/{price}', [ProductCatalogController::class, 'updatePrice'])->name('update-price');
         });
     });
 });

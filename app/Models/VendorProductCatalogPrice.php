@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property mixed $productVariation
  * @property mixed $price
  * @property mixed $product_id
+ * @property mixed $catalog
  */
 class VendorProductCatalogPrice extends Model
 {

@@ -140,12 +140,14 @@ class ProductCatalogController extends Controller
                   ->where('source_vendor_id', $vendor->id)
                   ->where('product_id', $product->id);
         })
+        ->with(['productVariation'])
         ->where('product_id', $product->id)
         ->orderBy('id')
         ->get()
         ->map(fn ($price) => [
             'id' => $price->id,
             'product_variation_id' => $price->product_variation_id,
+            'product_variation_sku' => $price->productVariation?->sku,
             'type' => $price->type,
             'status' => (bool) $price->status,
             'price' => $price->price,
@@ -190,6 +192,38 @@ class ProductCatalogController extends Controller
                 'price' => $price->price
             ]
         ]);
+    }
+
+    public function updatePrice(VendorProductCatalogPrice $price): RedirectResponse
+    {
+        $validate = request()->validate([
+            'status' => ['required', 'boolean'],
+            'price' => ['required', 'numeric'],
+        ]);
+
+        try {
+
+            $price->update([
+                'status' => $validate['status'],
+                'price' => $validate['price'],
+            ]);
+
+            $price->load(['catalog']);
+
+            return redirect()
+                ->route('vendor.product.catalog.edit-product', [
+                    'vendor' => $price->catalog->source_vendor_id,
+                    'product' => $price->product_id]
+                )
+                ->with(['success' => 'Price updated successfully.']);
+
+        } catch (Exception $e) {
+            Log::channel('custom_errors')->error(ProductCatalogController::class . '::updatePrice(): ' . $e->getMessage());
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Something went wrong. Please try again');
+        }
     }
 
     /**

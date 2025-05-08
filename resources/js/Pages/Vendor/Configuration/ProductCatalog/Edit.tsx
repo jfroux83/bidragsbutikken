@@ -24,6 +24,7 @@ interface SourceVendor {
 interface Price {
     id: number;
     product_variation_id: number;
+    product_variation_sku: string;
     type: string;
     status: boolean;
     price: number;
@@ -58,8 +59,8 @@ const Edit = ({
             }
         },
         {
-            key: 'product_variation_id',
-            title: 'Variation ID',
+            key: 'product_variation_sku',
+            title: 'Variation SKU',
         },
         {
             key: 'price',
