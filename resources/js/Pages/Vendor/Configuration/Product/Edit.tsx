@@ -16,6 +16,8 @@ import {CornerDownLeft} from "lucide-react";
 interface Product {
     id: number;
     name: string;
+    unit_measure: string;
+    tag_line: string;
     description: string;
     status: boolean;
     base_price: number;
@@ -56,6 +58,8 @@ const Edit = ({
 
     const { data, setData, put, processing, errors } = useForm({
         name: product.name,
+        unit_measure: product.unit_measure,
+        tag_line: product.tag_line,
         description: product.description,
         status: product.status,
         base_price: product.base_price,
@@ -109,6 +113,22 @@ const Edit = ({
                         onChange={(e: any) => setData('name', e.target.value)}
                         error={errors.name}
                         required
+                    />
+
+                    <TextField
+                        name="unit_measure"
+                        label="Unit of Measure"
+                        value={data.unit_measure}
+                        onChange={(e: any) => setData('unit_measure', e.target.value)}
+                        error={errors.unit_measure}
+                    />
+
+                    <TextField
+                        name="tag_line"
+                        label="Tag Line"
+                        value={data.tag_line}
+                        onChange={(e: any) => setData('tag_line', e.target.value)}
+                        error={errors.tag_line}
                     />
 
                     <Textarea

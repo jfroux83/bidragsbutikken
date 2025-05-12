@@ -42,6 +42,8 @@ const Create = ({
 
     const { data, setData, post, processing, errors } = useForm({
         name: '',
+        unit_measure: '',
+        tag_line: '',
         description: '',
         status: true,
         base_price: 0,
@@ -95,6 +97,22 @@ const Create = ({
                         onChange={(e: any) => setData('name', e.target.value)}
                         error={errors.name}
                         required
+                    />
+
+                    <TextField
+                        name="unit_measure"
+                        label="Unit of Measure"
+                        value={data.unit_measure}
+                        onChange={(e: any) => setData('unit_measure', e.target.value)}
+                        error={errors.unit_measure}
+                    />
+
+                    <TextField
+                        name="tag_line"
+                        label="Tag Line"
+                        value={data.tag_line}
+                        onChange={(e: any) => setData('tag_line', e.target.value)}
+                        error={errors.tag_line}
                     />
 
                     <Textarea

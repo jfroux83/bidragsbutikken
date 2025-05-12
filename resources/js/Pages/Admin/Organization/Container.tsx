@@ -22,16 +22,22 @@ interface Props {
         telephone: string;
         email: string;
         logo: string;
+        vendor_id: number;
     };
-    postalCodes: Array<{
+    postalCodes: {
         label: string;
         value: string;
-    }>;
+    }[];
+    vendors: {
+        label: string;
+        value: number;
+    }[];
 }
 
 const Container = ({
     organization,
     postalCodes,
+    vendors
 }: Props) => {
 
     const [activeTab, setActiveTab] = useState<Tab>('edit');
@@ -111,6 +117,7 @@ const Container = ({
                                 <Edit
                                     organization={organization}
                                     postalCodes={postalCodes}
+                                    vendors={vendors}
                                 />
                             </div>
                         )}

@@ -9,7 +9,6 @@ const Index = () => {
             <Head title="Customer Dashboard" />
             <PageLayout
                 title="Customer Dashboard"
-                containerClassName="bg-white shadow rounded-md mt-2"
             >
                 <div>Welcome to the Customer Dashboard</div>
             </PageLayout>

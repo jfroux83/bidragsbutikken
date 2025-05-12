@@ -11,6 +11,7 @@ interface Product {
     id: number;
     status: boolean;
     name: string;
+    unit_measure: string;
     base_price: number;
     is_subscribable: boolean;
 }
@@ -30,6 +31,16 @@ const Index = ({
         {
             key: 'name',
             title: 'Name',
+            filterable: true,
+            filterConfig: {
+                type: 'text',
+                placeholder: 'search...'
+            },
+            sortable: true,
+        },
+        {
+            key: 'unit_measure',
+            title: 'Unit of Measure',
             filterable: true,
             filterConfig: {
                 type: 'text',

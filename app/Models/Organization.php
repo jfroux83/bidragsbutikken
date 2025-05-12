@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -19,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property mixed $telephone
  * @property mixed $email
  * @property mixed $logo
+ * @property mixed $vendor_id
  */
 class Organization extends Model
 {
@@ -34,12 +36,13 @@ class Organization extends Model
         'postal_code',
         'telephone',
         'email',
-        'logo'
+        'logo',
+        'vendor_id'
     ];
 
     // relationships
-    public function vendors(): HasMany
+    public function vendor(): belongsTo
     {
-        return $this->hasMany(OrganizationVendor::class, 'organization_id', 'id');
+        return $this->belongsTo(Vendor::class, 'vendor_id', 'id');
     }
 }

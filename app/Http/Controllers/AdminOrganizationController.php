@@ -29,7 +29,8 @@ class AdminOrganizationController extends Controller
     public function index(): Response|ResponseFactory
     {
         try {
-            $organizations = Organization::orderBy('name')
+            $organizations = Organization::with(['vendor:id,name'])
+                ->orderBy('name')
                 ->get()
                 ->map(fn ($org) => [
                     'id' => $org->id,
@@ -42,6 +43,8 @@ class AdminOrganizationController extends Controller
                     'postalCode' => $org->postal_code,
                     'telephone' => $org->telephone,
                     'email' => $org->email,
+                    'vendor_id' => $org->vendor_id,
+                    'vendor_name' => $org->vendor?->name,
                 ]);
 
             return inertia('Admin/Organization/Index', [
@@ -60,6 +63,7 @@ class AdminOrganizationController extends Controller
     {
         return inertia('Admin/Organization/Create', [
             'postalCodes' => $this->getPostalCodes(),
+            'vendors' => $this->getVendors(),
         ]);
     }
 
@@ -75,6 +79,7 @@ class AdminOrganizationController extends Controller
             'postalCode' => [],
             'telephone' => [],
             'email' => ['required', 'email'],
+            'vendor_id' => ['nullable'],
         ]);
 
         try {
@@ -96,8 +101,7 @@ class AdminOrganizationController extends Controller
                 'postal_code' => $validate['postalCode'],
                 'telephone' => $validate['telephone'],
                 'email' => $validate['email'],
-                'created_at' => now(),
-                'updated_at' => now(),
+                'vendor_id' => $validate['vendor_id']
             ]);
 
             $registration = $this->userRegistrationService->userRegistration('organization', $organization->id, $validate['email']);
@@ -138,9 +142,11 @@ class AdminOrganizationController extends Controller
                 'postalCode' => $organization->postal_code,
                 'telephone' => $organization->telephone,
                 'email' => $organization->email,
-                'logo' => $organization->logo
+                'logo' => $organization->logo,
+                'vendor_id' => $organization->vendor_id
             ],
             'postalCodes' => $this->getPostalCodes(),
+            'vendors' => $this->getVendors(),
         ]);
     }
 
@@ -149,13 +155,14 @@ class AdminOrganizationController extends Controller
         $validate = request()->validate([
             'status' => ['required'],
             'name' => ['required'],
-            'registrationNumber' => [],
-            'address1' => [],
-            'address2' => [],
-            'city' => [],
-            'postalCode' => [],
-            'telephone' => [],
-            'email' => [],
+            'registrationNumber' => ['nullable'],
+            'address1' => ['nullable'],
+            'address2' => ['nullable'],
+            'city' => ['nullable'],
+            'postalCode' => ['nullable'],
+            'telephone' => ['nullable'],
+            'email' => ['nullable'],
+            'vendor_id' => ['nullable'],
         ]);
 
         try {
@@ -169,7 +176,7 @@ class AdminOrganizationController extends Controller
                 'postal_code' => $validate['postalCode'],
                 'telephone' => $validate['telephone'],
                 'email' => $validate['email'],
-                'updated_at' => now(),
+                'vendor_id' => $validate['vendor_id']
             ]);
 
             $user_id = OrganizationUser::where('organization_id', $organization->id)->first()->user_id;
@@ -374,6 +381,17 @@ class AdminOrganizationController extends Controller
             ->map(fn ($postalCode) => [
                 'label' => $postalCode->postal_code . ', ' . $postalCode->city,
                 'value' => (string) $postalCode->postal_code,
+            ]);
+    }
+
+    private function getVendors()
+    {
+        return Vendor::where('status', true)
+            ->orderBy('name')
+            ->get()
+            ->map(fn ($vendor) => [
+                'label' => $vendor->name,
+                'value' => $vendor->id,
             ]);
     }
 

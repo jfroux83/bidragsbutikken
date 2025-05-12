@@ -19,6 +19,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property mixed $categories
  * @property mixed $tags
  * @property mixed $variations
+ * @property mixed $unit_measure
+ * @property mixed $tag_line
  */
 class Product extends Model
 {
@@ -29,6 +31,8 @@ class Product extends Model
         'description',
         'base_price',
         'is_subscribable',
+        'tag_line',
+        'unit_measure',
     ];
 
     protected $casts = [
