@@ -95,8 +95,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'profile:admin'])->g
          Route::post('/users', [AdminOrganizationController::class, 'destroyUser'])->name('destroy-user');
          Route::post('/users/password-reset', [AdminOrganizationController::class, 'passwordReset'])->name('password-reset');
          // Organization->Vendors
-         Route::get('/vendors/{organization}', [AdminOrganizationController::class, 'vendors'])->name('vendors');
-         Route::post('/vendors/save', [AdminOrganizationController::class, 'vendorSave'])->name('vendor-save');
+         // Route::get('/vendors/{organization}', [AdminOrganizationController::class, 'vendors'])->name('vendors');
+         // Route::post('/vendors/save', [AdminOrganizationController::class, 'vendorSave'])->name('vendor-save');
+         // Organization->Vendor->Products
      });
 
      Route::prefix('vendor')->name('vendor.')->group(function () {

@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Jobs\UserPasswordResetJob;
 use App\Models\Organization;
+use App\Models\OrganizationCustomer;
+use App\Models\OrganizationProduct;
 use App\Models\OrganizationUser;
-use App\Models\OrganizationVendor;
 use App\Models\PostalCode;
+use App\Models\Product;
 use App\Models\User;
 use App\Models\Vendor;
 use App\Services\UserRegistrationService;
@@ -115,6 +117,8 @@ class AdminOrganizationController extends Controller
                     ->with('error', 'Registration failed: Email address is already in use.');
             }
 
+            $this->syncVendorProducts($organization->id, $organization->vendor_id);
+
             return redirect()
                 ->route('admin.organization.index')
                 ->with('success', 'Organization created successfully.');
@@ -145,6 +149,7 @@ class AdminOrganizationController extends Controller
                 'logo' => $organization->logo,
                 'vendor_id' => $organization->vendor_id
             ],
+            'products' => $this->products($organization->id),
             'postalCodes' => $this->getPostalCodes(),
             'vendors' => $this->getVendors(),
         ]);
@@ -183,6 +188,8 @@ class AdminOrganizationController extends Controller
             $user = User::where('id', $user_id)->first();
             $user->update(['email' => $validate['email']]);
 
+            $this->syncVendorProducts($organization->id, $organization->vendor_id);
+
             return redirect()
                 ->route('admin.organization.index')
                 ->with('success', 'Organization updated successfully.');
@@ -199,6 +206,15 @@ class AdminOrganizationController extends Controller
     public function destroy(Organization $organization): RedirectResponse
     {
         try {
+            $organizationUsers = OrganizationUser::where('organization_id', $organization->id)->get();
+            $organizationUsers->each->delete();
+
+            $organizationProducts = OrganizationProduct::where('organization_id', $organization->id)->get();
+            $organizationProducts->each->delete();
+
+            $organizationCustomers = OrganizationCustomer::where('organization_id', $organization->id)->get();
+            $organizationCustomers->each->delete();
+
             $organization->delete();
 
             return redirect()
@@ -277,96 +293,112 @@ class AdminOrganizationController extends Controller
     /**
      * Organization Vendors
      */
-    public function vendors(Organization $organization): JsonResponse
+//    public function vendors(Organization $organization): JsonResponse
+//    {
+//        try {
+//            $vendors = Vendor::where('status', true)
+//                ->orderBy('name')
+//                ->get()
+//                ->map(fn ($vendor) => [
+//                    'id' => $vendor->id,
+//                    'title' => $vendor->name,
+//                ]);
+//
+//            $vendorIds = OrganizationVendor::where('organization_id', $organization->id)
+//                ->get()
+//                ->pluck('vendor_id')
+//                ->toArray();
+//
+//            $organizationVendors = Vendor::whereIn('id', $vendorIds)
+//                ->orderBy('name')
+//                ->get()
+//                ->map(fn ($vendor) => [
+//                    'id' => $vendor->id,
+//                    'title' => $vendor->name,
+//                ]);
+//
+//            // Filter out assigned vendors to get the not_assigned set
+//            $notAssigned = $vendors->reject(function ($vendor) use ($vendorIds) {
+//                return in_array($vendor['id'], $vendorIds);
+//            })->values();
+//
+//            $sections = [
+//                [
+//                    'id' => 1,
+//                    'key' => 'not_assigned',
+//                    'title' => 'Not Assigned',
+//                    'cards' => $notAssigned,
+//                ],
+//                [
+//                    'id' => 2,
+//                    'key' => 'assigned',
+//                    'title' => 'Assigned',
+//                    'cards' => $organizationVendors,
+//                ]
+//            ];
+//
+//            return response()->json([
+//                'message' => 'success',
+//                'dataset' => $sections,
+//            ]);
+//
+//        } catch (Exception $e) {
+//            Log::channel('custom_errors')->error(AdminOrganizationController::class . '::vendors(): ' . $e->getMessage());
+//            return response()->json([
+//                'message' => 'error',
+//            ]);
+//        }
+//    }
+
+//    public function vendorSave(): JsonResponse
+//    {
+//        $validate = request()->validate([
+//            'organizationId' => ['required'],
+//            'vendorId' => ['required'],
+//        ]);
+//
+//        try {
+//            $record = OrganizationVendor::where('organization_id', $validate['organizationId'])
+//                ->where('vendor_id', $validate['vendorId'])
+//                ->first();
+//
+//            if (!$record) {
+//                OrganizationVendor::create([
+//                    'organization_id' => $validate['organizationId'],
+//                    'vendor_id' => $validate['vendorId'],
+//                    'created_at' => now(),
+//                    'updated_at' => now(),
+//                ]);
+//            } else {
+//                $record->delete();
+//            }
+//
+//            return response()->json([
+//                'message' => 'success',
+//            ]);
+//
+//        } catch (Exception $e) {
+//            Log::channel('custom_errors')->error(AdminOrganizationController::class . '::vendorSave(): ' . $e->getMessage());
+//            return response()->json([
+//                'message' => 'error',
+//            ]);
+//        }
+//    }
+
+    /**
+     * Organization->Vendor->Products
+     */
+    public function products($organization_id)
     {
-        try {
-            $vendors = Vendor::where('status', true)
-                ->orderBy('name')
-                ->get()
-                ->map(fn ($vendor) => [
-                    'id' => $vendor->id,
-                    'title' => $vendor->name,
-                ]);
-
-            $vendorIds = OrganizationVendor::where('organization_id', $organization->id)
-                ->get()
-                ->pluck('vendor_id')
-                ->toArray();
-
-            $organizationVendors = Vendor::whereIn('id', $vendorIds)
-                ->orderBy('name')
-                ->get()
-                ->map(fn ($vendor) => [
-                    'id' => $vendor->id,
-                    'title' => $vendor->name,
-                ]);
-
-            // Filter out assigned vendors to get the not_assigned set
-            $notAssigned = $vendors->reject(function ($vendor) use ($vendorIds) {
-                return in_array($vendor['id'], $vendorIds);
-            })->values();
-
-            $sections = [
-                [
-                    'id' => 1,
-                    'key' => 'not_assigned',
-                    'title' => 'Not Assigned',
-                    'cards' => $notAssigned,
-                ],
-                [
-                    'id' => 2,
-                    'key' => 'assigned',
-                    'title' => 'Assigned',
-                    'cards' => $organizationVendors,
-                ]
-            ];
-
-            return response()->json([
-                'message' => 'success',
-                'dataset' => $sections,
+        return OrganizationProduct::with(['vendor:id,name', 'product:id,name'])
+            ->where('organization_id', $organization_id)
+            ->get()
+            ->map(fn ($product) => [
+                'id' => $product->id,
+                'vendor_name' => $product->vendor?->name,
+                'product_name' => $product->product?->name,
+                'status' => (bool) $product->status
             ]);
-
-        } catch (Exception $e) {
-            Log::channel('custom_errors')->error(AdminOrganizationController::class . '::vendors(): ' . $e->getMessage());
-            return response()->json([
-                'message' => 'error',
-            ]);
-        }
-    }
-
-    public function vendorSave(): JsonResponse
-    {
-        $validate = request()->validate([
-            'organizationId' => ['required'],
-            'vendorId' => ['required'],
-        ]);
-
-        try {
-            $record = OrganizationVendor::where('organization_id', $validate['organizationId'])
-                ->where('vendor_id', $validate['vendorId'])
-                ->first();
-
-            if (!$record) {
-                OrganizationVendor::create([
-                    'organization_id' => $validate['organizationId'],
-                    'vendor_id' => $validate['vendorId'],
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-            } else {
-                $record->delete();
-            }
-
-            return response()->json([
-                'message' => 'success',
-            ]);
-
-        } catch (Exception $e) {
-            Log::channel('custom_errors')->error(AdminOrganizationController::class . '::vendorSave(): ' . $e->getMessage());
-            return response()->json([
-                'message' => 'error',
-            ]);
-        }
     }
 
 
@@ -412,5 +444,37 @@ class AdminOrganizationController extends Controller
                 'email' => $user->email,
                 'locale' => $user->locale,
             ]);
+    }
+
+    private function syncVendorProducts($organizationId, $vendorId): void
+    {
+        try {
+            $products = Product::where('vendor_id', $vendorId)->pluck('id')->toArray();
+
+            $otherVendorProducts = OrganizationProduct::where('organization_id', $organizationId)
+                ->whereRaw("vendor_id != $vendorId")
+                ->get();
+
+            if ($otherVendorProducts->count() > 0) {
+                $otherVendorProducts->each->delete();
+            }
+
+            foreach ($products as $productId) {
+                $exists = OrganizationProduct::where('organization_id', $organizationId)
+                    ->where('vendor_id', $vendorId)
+                    ->where('product_id', $productId)
+                    ->exists();
+
+                if (!$exists) {
+                    OrganizationProduct::create([
+                        'organization_id' => $organizationId,
+                        'vendor_id' => $vendorId,
+                        'product_id' => $productId,
+                    ]);
+                }
+            }
+        } catch (Exception $e) {
+            Log::channel('custom_errors')->error(AdminOrganizationController::class . '::syncVendorProducts(): ' . $e->getMessage());
+        }
     }
 }

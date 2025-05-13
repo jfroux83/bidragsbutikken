@@ -3,11 +3,18 @@ import {Head, router} from "@inertiajs/react";
 import AdminLayout from "@/Layouts/AdminLayout";
 import PageLayout from "@/Components/UI/PageLayout";
 import Edit from "@/Pages/Admin/Organization/Edit";
-import {CornerDownLeft, Plus} from "lucide-react";
 import Users from "@/Pages/Admin/Organization/Users";
-import Vendors from "@/Pages/Admin/Organization/Vendors";
+import {CornerDownLeft} from "lucide-react";
+import Products from "@/Pages/Admin/Organization/Products";
 
-type Tab = 'edit' | 'payment_methods' | 'vendors' | 'users';
+type Tab = 'edit' | 'products' | 'payment_methods' | 'users';
+
+interface Product {
+    id: number;
+    vendor_name: string;
+    product_name: string;
+    status: boolean;
+}
 
 interface Props {
     organization: {
@@ -24,6 +31,7 @@ interface Props {
         logo: string;
         vendor_id: number;
     };
+    products: Product[],
     postalCodes: {
         label: string;
         value: string;
@@ -36,6 +44,7 @@ interface Props {
 
 const Container = ({
     organization,
+    products,
     postalCodes,
     vendors
 }: Props) => {
@@ -79,6 +88,16 @@ const Container = ({
                             </button>
                             <button
                                 className={`text-left px-4 py-3 rounded-lg mb-2 ${
+                                    activeTab === 'products'
+                                        ? 'bg-green-50 text-green-600 font-medium'
+                                        : 'text-gray-600 hover:bg-gray-100'
+                                }`}
+                                onClick={() => handleTabChange('products')}
+                            >
+                                Products
+                            </button>
+                            <button
+                                className={`text-left px-4 py-3 rounded-lg mb-2 ${
                                     activeTab === 'payment_methods'
                                         ? 'bg-green-50 text-green-600 font-medium'
                                         : 'text-gray-600 hover:bg-gray-100'
@@ -86,16 +105,6 @@ const Container = ({
                                 onClick={() => handleTabChange('payment_methods')}
                             >
                                 Payment Methods
-                            </button>
-                            <button
-                                className={`text-left px-4 py-3 rounded-lg mb-2 ${
-                                    activeTab === 'vendors'
-                                        ? 'bg-green-50 text-green-600 font-medium'
-                                        : 'text-gray-600 hover:bg-gray-100'
-                                }`}
-                                onClick={() => handleTabChange('vendors')}
-                            >
-                                Vendors
                             </button>
                             <button
                                 className={`text-left px-4 py-3 rounded-lg mb-2 ${
@@ -121,20 +130,16 @@ const Container = ({
                                 />
                             </div>
                         )}
+                        {activeTab === 'products' && (
+                            <div>
+                                <h2 className="text-2xl font-medium mb-6">Products</h2>
+                                <Products products={products} />
+                            </div>
+                        )}
                         {activeTab === 'payment_methods' && (
                             <div>
                                 <h2 className="text-2xl font-medium mb-6">Payment Methods</h2>
 
-                            </div>
-                        )}
-                        {activeTab === 'vendors' && (
-                            <div>
-                                <h2 className="text-2xl font-medium mb-6">Vendors</h2>
-                                <Vendors organization={{
-                                        id: organization.id,
-                                        name: organization.name,
-                                    }}
-                                />
                             </div>
                         )}
                         {activeTab === 'users' && (
