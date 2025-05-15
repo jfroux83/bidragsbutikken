@@ -401,6 +401,25 @@ class AdminOrganizationController extends Controller
             ]);
     }
 
+    public function toggleProductStatus(OrganizationProduct $product): RedirectResponse
+    {
+        try {
+            $product->update([
+                'status' => !$product->status
+            ]);
+
+            return redirect()
+                ->back()
+                ->with('success', 'Product status updated successfully.');
+
+        } catch (Exception $e) {
+            Log::channel('custom_errors')->error(AdminOrganizationController::class . '::toggleProductStatus(): ' . $e->getMessage());
+            return redirect()
+                ->back()
+                ->with('error', 'Something went wrong. Please try again later.');
+        }
+    }
+
 
     /**
      * Helper methods

@@ -98,6 +98,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'profile:admin'])->g
          // Route::get('/vendors/{organization}', [AdminOrganizationController::class, 'vendors'])->name('vendors');
          // Route::post('/vendors/save', [AdminOrganizationController::class, 'vendorSave'])->name('vendor-save');
          // Organization->Vendor->Products
+         Route::get('/product/{product}/toggle-status', [AdminOrganizationController::class, 'toggleProductStatus'])->name('product-status-toggle');
      });
 
      Route::prefix('vendor')->name('vendor.')->group(function () {

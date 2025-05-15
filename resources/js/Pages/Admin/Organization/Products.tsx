@@ -1,5 +1,7 @@
+import {router} from "@inertiajs/react";
 import {ClientDataTable} from "@/Components/DataTable/ClientDataTable";
-import {BaseColumn} from "@/Components/DataTable/DataTable";
+import {Action, BaseColumn} from "@/Components/DataTable/DataTable";
+import {ToggleRight} from "lucide-react";
 
 interface Product {
     id: number;
@@ -36,11 +38,20 @@ const Products = ({ products }: Props) => {
         }
     ];
 
+    const handleToggleStatus = (product: Product) => {
+        router.get(`/admin/organization/product/${product.id}/toggle-status`);
+    };
+
+    const actions: Action<Product>[] = [
+        { icon: ToggleRight, label: 'Toggle Status', onClick: handleToggleStatus, variant: 'primary' },
+    ];
+
     return (
         <div className="w-full">
             <ClientDataTable
                 columns={columns}
                 data={products}
+                actions={actions}
             />
         </div>
     );

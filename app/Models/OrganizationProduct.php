@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @method static where(string $string, mixed $id)
  * @method static create(array $array)
+ * @property mixed $status
  */
 class OrganizationProduct extends Model
 {
