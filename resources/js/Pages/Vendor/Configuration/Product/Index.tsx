@@ -13,7 +13,7 @@ interface Product {
     name: string;
     unit_measure: string;
     base_price: number;
-    is_subscribable: boolean;
+    type: string;
 }
 
 interface Props {
@@ -39,6 +39,19 @@ const Index = ({
             sortable: true,
         },
         {
+            key: 'type',
+            title: 'Type',
+            filterable: true,
+            filterConfig: {
+                type: 'text',
+                placeholder: 'search...'
+            },
+            sortable: true,
+            formatter: (value: string) => (
+                <span>{value === 'once-off' ? 'Once-Off' : (value === 'subscription' ? 'Subscription' : 'Both')}</span>
+            )
+        },
+        {
             key: 'unit_measure',
             title: 'Unit of Measure',
             filterable: true,
@@ -56,17 +69,6 @@ const Index = ({
                 status: {
                     'true': { label: 'Active', className: 'text-green-800 bg-green-100' },
                     'false': { label: 'Inactive', className: 'text-gray-800 bg-red-100' },
-                }
-            }
-        },
-        {
-            key: 'is_subscribable',
-            title: 'Subscribable',
-            type: 'status',
-            config: {
-                status: {
-                    'true': { label: 'Yes', className: 'text-green-800 bg-green-100' },
-                    'false': { label: 'No', className: 'text-gray-800 bg-red-100' },
                 }
             }
         },

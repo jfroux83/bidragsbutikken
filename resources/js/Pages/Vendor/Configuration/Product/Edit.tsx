@@ -21,7 +21,7 @@ interface Product {
     description: string;
     status: boolean;
     base_price: number;
-    is_subscribable: boolean;
+    type: string;
     category_ids: number[];
     tag_ids: number[];
     variations: any[];
@@ -63,7 +63,7 @@ const Edit = ({
         description: product.description,
         status: product.status,
         base_price: product.base_price,
-        is_subscribable: product.is_subscribable,
+        type: product.type,
         category_ids: product.category_ids,
         tag_ids: product.tag_ids,
         variations: product.variations || []
@@ -159,16 +159,17 @@ const Edit = ({
                         />
 
                         <Radio
-                            name="is_subscribable"
-                            label="Subscribable"
-                            value={data.is_subscribable}
+                            name="type"
+                            label="Type"
+                            value={data.type}
                             options={[
-                                { value: true, label: 'Yes' },
-                                { value: false, label: 'No' },
+                                { value: 'both', label: 'Both' },
+                                { value: 'subscription', label: 'Subscription' },
+                                { value: 'once-off', label: 'Once-Off' },
                             ]}
                             onChange={(field, value) => setData(field, value)}
-                            error={errors.is_subscribable}
-                            cols={2}
+                            error={errors.type}
+                            cols={3}
                             containerHeight="80px"
                             required
                         />

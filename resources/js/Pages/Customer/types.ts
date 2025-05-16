@@ -11,4 +11,11 @@ export interface Product {
     tag_line: string;
     unit_measure: string;
     variations?: Variation[];
+    categories?: number[];
+    tags?: number[];
+}
+
+export interface FilterOption {
+    label: string;
+    value: number;
 }

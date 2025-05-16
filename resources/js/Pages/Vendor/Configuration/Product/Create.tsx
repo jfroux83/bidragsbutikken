@@ -47,7 +47,7 @@ const Create = ({
         description: '',
         status: true,
         base_price: 0,
-        is_subscribable: false,
+        type: 'both',
         category_ids: [],
         tag_ids: [],
         variations: [],
@@ -143,16 +143,17 @@ const Create = ({
                         />
 
                         <Radio
-                            name="is_subscribable"
-                            label="Subscribable"
-                            value={data.is_subscribable}
+                            name="type"
+                            label="Type"
+                            value={data.type}
                             options={[
-                                { value: true, label: 'Yes' },
-                                { value: false, label: 'No' },
+                                { value: 'both', label: 'Both' },
+                                { value: 'subscription', label: 'Subscription' },
+                                { value: 'once-off', label: 'Once-Off' },
                             ]}
                             onChange={(field, value) => setData(field, value)}
-                            error={errors.is_subscribable}
-                            cols={2}
+                            error={errors.type}
+                            cols={3}
                             containerHeight="80px"
                             required
                         />
