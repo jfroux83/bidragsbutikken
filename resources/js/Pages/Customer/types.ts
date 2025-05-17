@@ -5,11 +5,15 @@ export interface Variation {
     status: boolean;
 }
 
+export type ProductType = 'both' | 'subscription' | 'once-off';
+
 export interface Product {
     id: number;
     name: string;
     tag_line: string;
     unit_measure: string;
+    base_price: number;
+    type: ProductType;
     variations?: Variation[];
     categories?: number[];
     tags?: number[];

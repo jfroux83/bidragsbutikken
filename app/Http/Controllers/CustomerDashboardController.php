@@ -33,6 +33,8 @@ class CustomerDashboardController extends Controller
                     'name' => $product->product?->name,
                     'tag_line' => $product->product?->tag_line,
                     'unit_measure' => $product->product?->unit_measure,
+                    'base_price' => $product->product?->base_price,
+                    'type' => $product->product?->type,
                     'variations' => $product->product?->variations->map(fn ($variation) => [
                         'id' => $variation->id,
                         'sku' => $variation->sku,
