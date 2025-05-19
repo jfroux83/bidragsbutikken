@@ -24,8 +24,9 @@ class ProductController extends Controller
                 'id' => $product->id,
                 'status' => (bool) $product->status,
                 'name' => $product->name,
+                'unit_measure' => $product->unit_measure,
                 'base_price' => $product->base_price,
-                'is_subscribable' => (bool) $product->is_subscribable,
+                'type' => $product->type,
             ]);
 
         return inertia('Vendor/Configuration/Product/Index', [
@@ -46,10 +47,12 @@ class ProductController extends Controller
     {
         $validated = request()->validate([
             'name' => ['required', 'string', 'max:255'],
+            'unit_measure' => ['required', 'string', 'max:30'],
+            'tag_line' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:1000'],
             'status' => ['required', 'boolean'],
             'base_price' => ['nullable', 'numeric'],
-            'is_subscribable' => ['nullable', 'boolean'],
+            'type' => ['required', 'string'],
             'category_ids' => ['nullable', 'array'],
             'category_ids.*' => ['required', 'integer', 'exists:product_categories,id'],
             'tag_ids' => ['nullable', 'array'],
@@ -73,7 +76,9 @@ class ProductController extends Controller
                 'description' => $validated['description'],
                 'status' => $validated['status'],
                 'base_price' => $validated['base_price'],
-                'is_subscribable' => $validated['is_subscribable'],
+                'type' => $validated['type'],
+                'unit_measure' => $validated['unit_measure'],
+                'tag_line' => $validated['tag_line'],
             ]);
 
             if (!empty($validated['category_ids'])) {
@@ -149,10 +154,12 @@ class ProductController extends Controller
             'product' => [
                 'id' => $product->id,
                 'name' => $product->name,
+                'unit_measure' => $product->unit_measure,
+                'tag_line' => $product->tag_line,
                 'description' => $product->description,
                 'status' => (bool) $product->status,
                 'base_price' => $product->base_price,
-                'is_subscribable' => (bool) $product->is_subscribable,
+                'type' => $product->type,
                 'category_ids' => $product->categories->pluck('id')->toArray(),
                 'tag_ids' => $product->tags->pluck('id')->toArray(),
                 'variations' => $variations,
@@ -167,10 +174,12 @@ class ProductController extends Controller
     {
         $validated = request()->validate([
             'name' => ['required', 'string', 'max:255'],
+            'unit_measure' => ['required', 'string', 'max:30'],
+            'tag_line' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:1000'],
             'status' => ['required', 'boolean'],
             'base_price' => ['nullable', 'numeric'],
-            'is_subscribable' => ['nullable', 'boolean'],
+            'type' => ['required', 'string'],
             'category_ids' => ['nullable', 'array'],
             'category_ids.*' => ['required', 'integer', 'exists:product_categories,id'],
             'tag_ids' => ['nullable', 'array'],
@@ -194,7 +203,9 @@ class ProductController extends Controller
                 'description' => $validated['description'],
                 'status' => $validated['status'],
                 'base_price' => $validated['base_price'],
-                'is_subscribable' => $validated['is_subscribable'],
+                'type' => $validated['type'],
+                'unit_measure' => $validated['unit_measure'],
+                'tag_line' => $validated['tag_line'],
             ]);
 
             $product->categories()->sync($validated['category_ids'] ?? []);

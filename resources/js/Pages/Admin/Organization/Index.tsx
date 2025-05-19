@@ -3,9 +3,9 @@ import {Head, router} from "@inertiajs/react";
 import AdminLayout from "@/Layouts/AdminLayout";
 import PageLayout from "@/Components/UI/PageLayout";
 import {ClientDataTable} from "@/Components/DataTable/ClientDataTable";
+import ConfirmationDialog from "@/Components/UI/ConfirmationDialog";
 import {Action} from "@/Components/DataTable/DataTable";
 import {Edit, Plus, Trash2} from "lucide-react";
-import ConfirmationDialog from "@/Components/UI/ConfirmationDialog";
 
 interface Organization {
     id: number;
@@ -18,6 +18,8 @@ interface Organization {
     postalCode: string;
     telephone: string;
     email: string;
+    vendor_id: number;
+    vendor_name: string;
 }
 
 interface Props {
@@ -79,6 +81,16 @@ const Index = ({
         {
             key: "postalCode",
             title: "Postal Code",
+            filterable: true,
+            filterConfig: {
+                type: "text",
+                placeholder: "search..."
+            },
+            sortable: true,
+        },
+        {
+            key: 'vendor_name',
+            title: "Vendor",
             filterable: true,
             filterConfig: {
                 type: "text",

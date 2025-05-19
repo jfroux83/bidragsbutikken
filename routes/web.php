@@ -12,6 +12,7 @@ use App\Http\Controllers\OrganizationCustomerController;
 use App\Http\Controllers\OrganizationDashboardController;
 use App\Http\Controllers\PostalCodeController;
 use App\Http\Controllers\ProductAttributeController;
+use App\Http\Controllers\ProductCatalogController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductTagController;
@@ -94,8 +95,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'profile:admin'])->g
          Route::post('/users', [AdminOrganizationController::class, 'destroyUser'])->name('destroy-user');
          Route::post('/users/password-reset', [AdminOrganizationController::class, 'passwordReset'])->name('password-reset');
          // Organization->Vendors
-         Route::get('/vendors/{organization}', [AdminOrganizationController::class, 'vendors'])->name('vendors');
-         Route::post('/vendors/save', [AdminOrganizationController::class, 'vendorSave'])->name('vendor-save');
+         // Route::get('/vendors/{organization}', [AdminOrganizationController::class, 'vendors'])->name('vendors');
+         // Route::post('/vendors/save', [AdminOrganizationController::class, 'vendorSave'])->name('vendor-save');
+         // Organization->Vendor->Products
+         Route::get('/product/{product}/toggle-status', [AdminOrganizationController::class, 'toggleProductStatus'])->name('product-status-toggle');
      });
 
      Route::prefix('vendor')->name('vendor.')->group(function () {
@@ -191,6 +194,17 @@ Route::prefix('vendor')->name('vendor.')->middleware(['auth', 'profile:vendor'])
             Route::delete('/{attribute}', [ProductAttributeController::class, 'destroy'])->name('destroy');
             Route::put('/{attribute}/values/{value}', [ProductAttributeController::class, 'updateValue'])->name('update-value');
             Route::delete('/{attribute}/values/{value}', [ProductAttributeController::class, 'destroyValue'])->name('destroy-value');
+        });
+
+        // Product Catalog
+        Route::prefix('catalog')->name('catalog.')->group(function () {
+            Route::get('/', [ProductCatalogController::class, 'index'])->name('index');
+            Route::get('/vendors', [ProductCatalogController::class, 'vendors'])->name('vendors');
+            Route::get('/vendor/{vendor}/products', [ProductCatalogController::class, 'vendorProducts'])->name('vendor-products');
+            Route::post('/add-product', [ProductCatalogController::class, 'addProduct'])->name('add-product');
+            Route::get('/{vendor}/{product}/edit', [ProductCatalogController::class, 'editProduct'])->name('edit-product');
+            Route::get('/product/price/{price}/edit', [ProductCatalogController::class, 'editPrice'])->name('edit-price');
+            Route::put('/product/price/{price}', [ProductCatalogController::class, 'updatePrice'])->name('update-price');
         });
     });
 });

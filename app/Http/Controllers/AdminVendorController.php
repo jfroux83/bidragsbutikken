@@ -38,6 +38,7 @@ class AdminVendorController extends Controller
                 'postalCode' => $vendor->postal_code,
                 'telephone' => $vendor->telephone,
                 'email' => $vendor->email,
+                'isPublic' => (bool) $vendor->is_public,
             ]);
 
         return inertia('Admin/Vendor/Index', [
@@ -71,6 +72,7 @@ class AdminVendorController extends Controller
             'contributionFee' => ['required', 'numeric'],
             'bonusFee' => ['required', 'numeric'],
             'maxDeliveryDistance' => ['required', 'numeric'],
+            'isPublic' => ['required', 'boolean'],
         ]);
 
         try {
@@ -99,6 +101,7 @@ class AdminVendorController extends Controller
                 'contribution_fee' => $validate['contributionFee'],
                 'bonus_fee' => $validate['bonusFee'],
                 'max_delivery_distance' => $validate['maxDeliveryDistance'],
+                'is_public' => $validate['isPublic'],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
@@ -147,7 +150,8 @@ class AdminVendorController extends Controller
                 'systemFee' => $vendor->system_fee,
                 'contributionFee' => $vendor->contribution_fee,
                 'bonusFee' => $vendor->bonus_fee,
-                'maxDeliveryDistance' => $vendor->max_delivery_distance
+                'maxDeliveryDistance' => $vendor->max_delivery_distance,
+                'isPublic' => (bool) $vendor->is_public
             ],
             'postalCodes' => $this->getPostalCodes(),
         ]);
@@ -172,6 +176,7 @@ class AdminVendorController extends Controller
             'contributionFee' => ['required', 'numeric'],
             'bonusFee' => ['required', 'numeric'],
             'maxDeliveryDistance' => ['required', 'numeric'],
+            'isPublic' => ['required', 'boolean'],
         ]);
 
         try {
@@ -192,6 +197,7 @@ class AdminVendorController extends Controller
                 'contribution_fee' => $validate['contributionFee'],
                 'bonus_fee' => $validate['bonusFee'],
                 'max_delivery_distance' => $validate['maxDeliveryDistance'],
+                'is_public' => $validate['isPublic'],
             ]);
 
             $user_id = VendorUser::where('vendor_id', $vendor->id)->first()->user_id;

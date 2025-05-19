@@ -5,20 +5,25 @@ import PageLayout from "@/Components/UI/PageLayout";
 import Form from "@/Components/Forms/Form";
 import Radio from "@/Components/Forms/Radio";
 import TextField from "@/Components/Forms/TextField";
+import Select from "@/Components/Forms/Select";
 import ButtonRow from "@/Components/Forms/ButtonRow";
 import Submit from "@/Components/Forms/Submit";
 import {CornerDownLeft, Mail} from "lucide-react";
-import Select from "@/Components/Forms/Select";
 
 interface Props {
-    postalCodes: Array<{
+    postalCodes: {
         label: string;
         value: string;
-    }>;
+    }[];
+    vendors: {
+        label: string;
+        value: number;
+    }[];
 }
 
 const Create = ({
-    postalCodes
+    postalCodes,
+    vendors
 }: Props) => {
 
     const { data, setData, post, processing, errors } = useForm({
@@ -31,6 +36,7 @@ const Create = ({
         postalCode: '',
         telephone: '',
         email: '',
+        vendor_id: null,
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -159,6 +165,16 @@ const Create = ({
                             required={true}
                         />
                     </div>
+
+                    <Select
+                        name="vendor_id"
+                        label="Vendor"
+                        value={data.vendor_id}
+                        options={vendors}
+                        onChange={(field, value) => setData(field, value)}
+                        error={errors.vendor_id}
+                        searchable={true}
+                    />
 
                     <ButtonRow>
                         <Submit processing={processing} />

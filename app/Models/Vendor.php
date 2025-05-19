@@ -26,6 +26,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property mixed $contribution_fee
  * @property mixed $bonus_fee
  * @property mixed $max_delivery_distance
+ * @property mixed $is_public
  */
 class Vendor extends Model
 {
@@ -48,6 +49,7 @@ class Vendor extends Model
         'contribution_fee',
         'bonus_fee',
         'max_delivery_distance',
-        'logo'
+        'logo',
+        'is_public'
     ];
 }

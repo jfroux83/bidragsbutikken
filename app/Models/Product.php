@@ -15,10 +15,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property mixed $description
  * @property mixed $status
  * @property mixed $base_price
- * @property mixed $is_subscribable
+ * @property mixed $type
  * @property mixed $categories
  * @property mixed $tags
  * @property mixed $variations
+ * @property mixed $unit_measure
+ * @property mixed $tag_line
  */
 class Product extends Model
 {
@@ -28,13 +30,14 @@ class Product extends Model
         'name',
         'description',
         'base_price',
-        'is_subscribable',
+        'type',
+        'tag_line',
+        'unit_measure',
     ];
 
     protected $casts = [
         'base_price' => 'decimal:2',
         'status' => 'integer',
-        'is_subscribable' => 'boolean',
     ];
 
     public function vendor(): BelongsTo
