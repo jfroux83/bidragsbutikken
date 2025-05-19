@@ -5,7 +5,7 @@ import Radio from "@/Components/Forms/Radio";
 import TextField from "@/Components/Forms/TextField";
 import ButtonRow from "@/Components/Forms/ButtonRow";
 import Submit from "@/Components/Forms/Submit";
-import {CornerDownLeft, Mail} from "lucide-react";
+import {Mail} from "lucide-react";
 import Select from "@/Components/Forms/Select";
 
 interface Props {
@@ -20,16 +20,22 @@ interface Props {
         postalCode: string;
         telephone: string;
         email: string;
+        vendor_id: number;
     };
-    postalCodes: Array<{
+    postalCodes: {
         label: string;
         value: string;
-    }>;
+    }[];
+    vendors: {
+        label: string;
+        value: number;
+    }[];
 }
 
 const Edit = ({
     organization,
-    postalCodes
+    postalCodes,
+    vendors
 }: Props) => {
 
     const { data, setData, put, processing, errors } = useForm({
@@ -42,15 +48,14 @@ const Edit = ({
         postalCode: organization.postalCode,
         telephone: organization.telephone,
         email: organization.email,
+        vendor_id: organization.vendor_id,
     });
+
+    console.log(vendors);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         put(`/admin/organization/${organization.id}`);
-    };
-
-    const handleReturn = () => {
-        router.get('/admin/organization');
     };
 
     return (
@@ -158,6 +163,16 @@ const Edit = ({
                     required={true}
                 />
             </div>
+
+            <Select
+                name="vendor_id"
+                label="Vendor"
+                value={data.vendor_id}
+                options={vendors}
+                onChange={(field, value) => setData(field, value)}
+                error={errors.vendor_id}
+                searchable={true}
+            />
 
             <ButtonRow>
                 <Submit processing={processing} />

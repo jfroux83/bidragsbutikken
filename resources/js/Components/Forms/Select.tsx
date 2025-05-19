@@ -9,7 +9,7 @@ const Select = ({
     onChange,
     required = false,
     disabled = false,
-    placeholder,
+    placeholder = '',
     multiple = false,
     searchable = false
 }) => {

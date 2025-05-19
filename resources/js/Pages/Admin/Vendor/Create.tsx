@@ -24,6 +24,7 @@ const Create = ({
 
     const { data, setData, post, processing, errors } = useForm({
         status: true,
+        isPublic: true,
         name: '',
         address1: '',
         address2: '',
@@ -64,21 +65,6 @@ const Create = ({
                 actions={actionsRoot}
             >
                 <Form onSubmit={handleSubmit}>
-                    <Radio
-                        name="status"
-                        label="Status"
-                        value={data.status}
-                        options={[
-                            { label: "Active", value: true },
-                            { label: "Inactive", value: false },
-                        ]}
-                        onChange={(field, value) => setData(field, value)}
-                        cols={2}
-                        error={errors.status}
-                        containerHeight="80px"
-                        required={true}
-                    />
-
                     <TextField
                         name="name"
                         label="Name"
@@ -87,6 +73,38 @@ const Create = ({
                         error={errors.name}
                         required={true}
                     />
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <Radio
+                            name="status"
+                            label="Status"
+                            value={data.status}
+                            options={[
+                                { label: "Active", value: true },
+                                { label: "Inactive", value: false },
+                            ]}
+                            onChange={(field, value) => setData(field, value)}
+                            cols={2}
+                            error={errors.status}
+                            containerHeight="80px"
+                            required={true}
+                        />
+
+                        <Radio
+                            name="isPublic"
+                            label="Public Visible"
+                            value={data.isPublic}
+                            options={[
+                                { label: 'Yes', value: true },
+                                { label: 'No', value: false },
+                            ]}
+                            onChange={(field, value) => setData(field, value)}
+                            cols={2}
+                            error={errors.isPublic}
+                            containerHeight="80px"
+                            required={true}
+                        />
+                    </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <TextField

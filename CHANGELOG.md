@@ -2,6 +2,13 @@
 
 All changes to this project will be documented here.
 
+## [1.3.0] - 2025-05-19
+- Feature: Vendor -> Product Catalogs
+- Change: Vendors - data structure
+- Change: Vendors - Products data structure
+- Change: Admin -> Organizations & Organization -> products
+- Feature: Customer -> Dashboard -> Products
+
 ## [1.2.0] - 2025-04-29
 - Feature: Vendor -> Product Categories
 - Feature: Vendor -> Product Tags

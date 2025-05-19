@@ -42,10 +42,12 @@ const Create = ({
 
     const { data, setData, post, processing, errors } = useForm({
         name: '',
+        unit_measure: '',
+        tag_line: '',
         description: '',
         status: true,
         base_price: 0,
-        is_subscribable: false,
+        type: 'both',
         category_ids: [],
         tag_ids: [],
         variations: [],
@@ -97,6 +99,22 @@ const Create = ({
                         required
                     />
 
+                    <TextField
+                        name="unit_measure"
+                        label="Unit of Measure"
+                        value={data.unit_measure}
+                        onChange={(e: any) => setData('unit_measure', e.target.value)}
+                        error={errors.unit_measure}
+                    />
+
+                    <TextField
+                        name="tag_line"
+                        label="Tag Line"
+                        value={data.tag_line}
+                        onChange={(e: any) => setData('tag_line', e.target.value)}
+                        error={errors.tag_line}
+                    />
+
                     <Textarea
                         name="description"
                         label="Description"
@@ -125,16 +143,17 @@ const Create = ({
                         />
 
                         <Radio
-                            name="is_subscribable"
-                            label="Subscribable"
-                            value={data.is_subscribable}
+                            name="type"
+                            label="Type"
+                            value={data.type}
                             options={[
-                                { value: true, label: 'Yes' },
-                                { value: false, label: 'No' },
+                                { value: 'both', label: 'Both' },
+                                { value: 'subscription', label: 'Subscription' },
+                                { value: 'once-off', label: 'Once-Off' },
                             ]}
                             onChange={(field, value) => setData(field, value)}
-                            error={errors.is_subscribable}
-                            cols={2}
+                            error={errors.type}
+                            cols={3}
                             containerHeight="80px"
                             required
                         />
