@@ -54,6 +54,19 @@ export const versions: Version[] = [
             'Change: Add unique email check when registering users (admin, organization, vendor, customer)',
             'Change: Add email sync to default user when changing email address (organization, vendor, customer)'
         ]
+    },
+    {
+        major: 1,
+        minor: 3,
+        patch: 0,
+        releaseDate: '2025-05-19',
+        notes: [
+            'Feature: Vendor -> Product Catalogs',
+            'Change: Vendors - data structure',
+            'Change: Vendors - Products data structure',
+            'Change: Admin -> Organizations & Organization -> products',
+            'Feature: Customer -> Dashboard -> Products'
+        ]
     }
 ];
 
